@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<style>
+
+
+#map { 
+	position:relative; 
+	width: 900px;
+	height: 500px;
+}
+
+svg {
+	position: absolute;
+	width: 900px;
+	height: 500px;
+}
+
+.hidden {
+	display: none;
+}
+
+#usa {
+	stroke: orange;
+	fill: blue;
+	fill-opacity: 0.4;
+}
+
+</style>
+<div id="map"></div> 
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiY29ybmVsbHJwYWwiLCJhIjoiY2o1bHdqZ3JuMzk2MzMybzh3dGc5Ymo5eCJ9.GZetHX1kypdxcVVSbil7jw'
+
+var maxBounds = new mapboxgl.LngLatBounds([-167.276413, 5.499550], [-52.233040, 83.162102]);
+
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/light-v9',
+    center: [-95.19670010050714, 38.04066455795754],
+    zoom: 3.3381432488722704,
+    maxBounds: maxBounds
+});
+
+map.addControl(new mapboxgl.NavigationControl());
+
+var container = map.getCanvasContainer()
+var svg = d3.select(container).append("svg")
+
+
+var transform = d3.geoTransform({
+    point: projectPoint
+});
+var path = d3.geoPath().projection(transform);
+
+d3.json("us.json", function(err, data) {
+
+    var featureElement = svg.selectAll("path")
+        .data(topojson.feature(data, data.objects.states).features)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("id", "usa");
+
+    map.on("viewreset", update)
+    map.on("movestart", function() {
+        svg.classed("hidden", true);
+    });
+    map.on("moveend", function() {
+        update()
+        if (map.getZoom() < 7) {
+            svg.classed("hidden", false);
+        }
+    })
+
+    function update() {
+        featureElement.attr("d", path);
+    }
+
+
+});
+
+function projectPoint(lon, lat) {
+    var point = map.project(new mapboxgl.LngLat(lon, lat));
+    this.stream.point(point.x, point.y);
+}
+
+</script>
+
