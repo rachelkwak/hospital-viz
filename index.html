@@ -23,10 +23,14 @@ svg {
 	display: none;
 }
 
+.show {
+	display: ;
+}
+
 #usa {
-	stroke: orange;
-	fill: blue;
-	fill-opacity: 0.4;
+	/*stroke: orange;*/
+	/*fill: blue;*/
+	fill-opacity: 0.5;
 }
 
 </style>
@@ -47,40 +51,83 @@ var map = new mapboxgl.Map({
 
 map.addControl(new mapboxgl.NavigationControl());
 
-var container = map.getCanvasContainer()
-var svg = d3.select(container).append("svg")
-
+var container = map.getCanvasContainer();
+var svg_map = d3.select(container).append("svg");
+var svg_data = d3.select(container).append("svg");
 
 var transform = d3.geoTransform({
     point: projectPoint
 });
 var path = d3.geoPath().projection(transform);
 
+
 d3.json("us.json", function(err, data) {
+	d3.json("state_cost.json", function(err, state_data) {
+		d3.json("hospital.json", function(err, hospital) {
+			
+			hospital.forEach(function(d) {
+				if (d.long&& d.lat){
+					d.coord = new mapboxgl.LngLat(d.long, d.lat);
+				}
+            });
+			var color = d3.scaleLinear()
+								.domain([18000, 97700])  
+								.range(["white", "blue"]); 
 
-    var featureElement = svg.selectAll("path")
-        .data(topojson.feature(data, data.objects.states).features)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("id", "usa");
+		    var featureElement = svg_map.selectAll("path")
+		        .data(topojson.feature(data, data.objects.states).features)
+		        .enter()
+		        .append("path")
+		        .attr("d", path)
+		        .attr("id", "usa")
+		        .style("fill", function(d) {return color(state_data[d.properties.name]); });
 
-    map.on("viewreset", update)
-    map.on("movestart", function() {
-        svg.classed("hidden", true);
+		    var circles = svg_data.attr("id", "hospital").selectAll("circle").data(hospital);
+
+		    map.on("viewreset", update)
+		    map.on("movestart", function() {
+		        svg_map.classed("hidden", true);
+		        svg_data.classed("hidden", true);
+		    });
+		    map.on("moveend", function() {
+		        update()
+		        svg_data.classed("hidden", false);
+		        if (map.getZoom() < 7) {
+		            svg_map.classed("hidden", false);
+		            svg_data.classed("hidden", true);
+		        }
+		    })
+
+		    function update() {
+		        featureElement.attr("d", path);
+
+		        if (map.getZoom() >= 7) {
+			        circles.enter().selectAll('circle').remove();
+
+				    circles.enter()
+		                    .append("circle")
+		                    .attr("cx", function(d) {
+		                        if (d.coord) {
+		                        	var c = map.project(d.coord);
+		                            return c['x'];
+		                        }
+		                    })
+		                    .attr("cy", function(d) {
+		                        if (d.coord) {
+		                        	var c = map.project(d.coord);
+		                            return c['y'];
+		                        }
+		                    })
+		                    .attr("r", 4)
+		                    .attr('fill-opacity', 0.4)
+		                    .style("fill", "blue")
+		        }
+
+		    }
+
+		    
+		});
     });
-    map.on("moveend", function() {
-        update()
-        if (map.getZoom() < 7) {
-            svg.classed("hidden", false);
-        }
-    })
-
-    function update() {
-        featureElement.attr("d", path);
-    }
-
-
 });
 
 function projectPoint(lon, lat) {
