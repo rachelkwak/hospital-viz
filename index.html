@@ -4,6 +4,9 @@
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.min.js'></script>
+<link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.css' type='text/css' />
+
 <style>
 
 
@@ -49,6 +52,10 @@ var map = new mapboxgl.Map({
     maxBounds: maxBounds
 });
 
+map.addControl(new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken
+}));
+
 map.addControl(new mapboxgl.NavigationControl());
 
 var container = map.getCanvasContainer();
@@ -91,10 +98,12 @@ d3.json("us.json", function(err, data) {
 		    });
 		    map.on("moveend", function() {
 		        update()
-		        svg_data.classed("hidden", false);
+		        
 		        if (map.getZoom() < 7) {
 		            svg_map.classed("hidden", false);
 		            svg_data.classed("hidden", true);
+		        } else {
+		        	svg_data.classed("hidden", false);
 		        }
 		    })
 
