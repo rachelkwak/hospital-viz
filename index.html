@@ -29,7 +29,7 @@
         font-weight: 600;
         
         position: absolute;
-        top: 10px;
+        top: 68px;
         right: 100px;
         
         z-index: 1;
@@ -107,6 +107,16 @@
     margin-right: 5px;
 }
 
+h6 {
+	margin-top: 15px;
+	margin-left: 15px;
+}
+
+h1 {
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
 </style>
 
 
@@ -114,6 +124,7 @@
 
 
 <body>
+<h1>Check My Healthcare Costs</h1>
 <div id="map"></div> 
 <div id='state-legend' class='legend'>
     <h6>Avg Cost</h6>
@@ -158,6 +169,7 @@
 </div>
 <nav id='filter-group' class='filter-group'></nav>
 <div class='col-xs-3'>
+	<h6>View Hospitals By:</h6>
 	<div id='buttons' class="btn btn-space"></div>
 </div>
 <script>
@@ -194,15 +206,16 @@ var surgeries = [
 	"917 - POISONING & TOXIC EFFECTS OF DRUGS W MCC"
 ];
 
-var sort = [
-  "avg_covered",
-  "avg_tot_pay",
-  "avg_med_pay",
-  "rating",
-  "mortality",
-  "safety",
-  "experience"
-];
+var sort = {
+	"avg_covered": "Average Covered Charges",
+  "avg_tot_pay": "Average Total Payments",
+  "avg_med_pay": "Average Medicare Payments",
+  "rating": "Hospital Rating",
+  "mortality": "Mortality Rating",
+  "safety": "Safety Rating",
+  "experience": "Experience Rating"
+}
+
 
 var filterGroup = document.getElementById('filter-group');
 
@@ -306,11 +319,11 @@ map.on('load', function() {
 	var ratingLegendEl = document.getElementById('rating-legend');
 	var featureLegendEl = document.getElementById('feature-legend');
 
-	  sort.forEach(function(g) {
+	  Object.keys(sort).forEach(function(g) {
 	      var b = document.createElement('button');
 	      b.type = 'button';
 	      b.setAttribute("class", "btn-space btn-outline-primary");
-	      b.textContent = g;
+	      b.textContent = sort[g];
 	      b.addEventListener('click', function() {
 	      	surgeries.forEach(function(name){
 	      		if (g=="avg_covered" || g=="avg_tot_pay" || g=="avg_med_pay") {
