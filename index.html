@@ -1,24 +1,28 @@
 <!DOCTYPE html>
+<html>
+<head>
 <meta charset="utf-8">
 <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet' />
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/topojson.v2.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.min.js'></script>
 <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.2.0/mapbox-gl-geocoder.css' type='text/css' />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" />
 
 <style>
 
 
 #map { 
 	position:relative; 
-	width: 900px;
+	width: 100%;
 	height: 500px;
 }
 
 svg {
 	position: absolute;
-	width: 900px;
+	width: 100%;
 	height: 500px;
 }
 
@@ -37,8 +41,61 @@ svg {
 }
 
 </style>
-<div id="map"></div> 
 
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-dark justify-content-between">
+  <a class="navbar-brand text-light">Hospital Vis</a>
+  <form class="form-inline">
+    <input class="form-control mr-sm-2" type="search" placeholder="Search Proceedures" aria-label="Search">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Select</button>
+  </form>
+</nav>
+<br>
+<br>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-sm-7">
+			<div id="map"></div> 
+		</div>
+		<div class="col-sm-5">
+			<div class="card">
+  				<table class="table">
+  <thead>
+    <tr>
+      <th scope="col" id="hosName">[Hosptial Name]</th>
+      <th scope="col">Ratings</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><span id="procName">Proceedure</span> Average:</th>
+      <td id="procPrice" class="text-success">$12345.00</td>
+    </tr>
+    <tr>
+      <th scope="row">Overall Rating:</th>
+      <td id="hosRating" class="text-warning">3.5</td>
+    </tr>
+    <tr>
+      <th scope="row">Effectiveness of Care:</th>
+      <td id="hosCare" class="text-success">Above Average</td>
+    </tr>
+    <tr>
+      <th scope="row">Safety of Care:</th>
+      <td id="hosSafety" class="text-success">Above Average</td>
+    </tr>
+    <tr>
+      <th scope="row">Patient Experience:</th>
+      <td id="hosExp" class="text-danger">Below Average</td>
+    </tr>
+  </tbody>
+</table>
+			</div>
+		</div>
+	</div>
+</div>
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29ybmVsbHJwYWwiLCJhIjoiY2o1bHdqZ3JuMzk2MzMybzh3dGc5Ymo5eCJ9.GZetHX1kypdxcVVSbil7jw'
 
@@ -80,7 +137,6 @@ map.addControl(new mapboxgl.NavigationControl());
 
 		}, 'waterway-label');
 	});
-
 
 
 
@@ -182,3 +238,5 @@ map.addControl(new mapboxgl.NavigationControl());
 
 </script>
 
+</body>
+</html>
