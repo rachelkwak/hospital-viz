@@ -625,7 +625,8 @@ d3.csv("surgery_state_averages.csv", function(err, data) {
 	          "translate(" + margin.left + "," + margin.top + ")");
 
 	  // Scale the range of the data in the domains
-	  x.domain([0, d3.max(data, function(d){ return d.Cost; })])
+	  xRange = data.map(function(d){ return parseInt(d.Cost)});
+	  x.domain([0, d3.max(xRange)]);
 	  y.domain(data.map(function(d) { return d.State; }));
 	  //y.domain([0, d3.max(data, function(d) { return d.sales; })]);
 
