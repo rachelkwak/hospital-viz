@@ -77,15 +77,81 @@
         font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     }
 
+    .legend {
+    background-color: #fff;
+    border-radius: 3px;
+    bottom: 320px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    padding: 10px;
+    position: absolute;
+    right: 550px;
+    z-index: 1;
+}
+
+.legend h6 {
+    margin: 0 0 10px;
+}
+
+.legend div span {
+    border-radius: 50%;
+    display: inline-block;
+    height: 10px;
+    margin-right: 5px;
+    width: 10px;
+}
+
 </style>
 
 
 </head>
 
+
 <body>
 <div id="map"></div> 
+<div id='state-legend' class='legend'>
+    <h6>Avg Cost</h6>
+    <div><span style='background-color: #081d58'></span>97,700</div>
+    <div><span style='background-color: #253494'></span>77,810</div>
+    <div><span style='background-color: #225ea8'></span>67,910</div>
+    <div><span style='background-color: #1d91c0'></span>58,010</div>
+    <div><span style='background-color: #41b6c4'></span>48,110</div>
+    <div><span style='background-color: #7fcdbb'></span>38,210</div>
+    <div><span style='background-color: #c7e9b4'></span>28,310</div>
+    <div><span style='background-color: #edf8b1'></span>18,410</div>
+    <div><span style='background-color: #ffffd9'></span>8,510</div>
+</div>
+
+<div id='avg-legend' class='legend' style='display: none;'>
+    <h6>Cost</h6>
+    <div><span style='background-color: #081d58'></span>200,600</div>
+    <div><span style='background-color: #253494'></span>76,800</div>
+    <div><span style='background-color: #225ea8'></span>38,400</div>
+    <div><span style='background-color: #1d91c0'></span>19,200</div>
+    <div><span style='background-color: #41b6c4'></span>9,600</div>
+    <div><span style='background-color: #7fcdbb'></span>4,800</div>
+    <div><span style='background-color: #c7e9b4'></span>2,400</div>
+    <div><span style='background-color: #edf8b1'></span>1,200</div>
+    <div><span style='background-color: #ffffd9'></span>600</div>
+</div>
+<div id='rating-legend' class='legend' style='display: none;'>
+    <h6>Rating</h6>
+    <div><span style='background-color: #2c7bb6'></span>5</div>
+    <div><span style='background-color: #abd9e9'></span>4</div>
+    <div><span style='background-color: #ffffbf'></span>3</div>
+    <div><span style='background-color: #fdae61'></span>2</div>
+    <div><span style='background-color: #d7191c'></span>Other</div>
+</div>
+
+<div id='feature-legend' class='legend' style='display: none;'>
+    <h6>Features</h6>
+    <div><span style='background-color: #91bfdb'></span>Above Avg</div>
+    <div><span style='background-color: #ffffbf'></span>Same</div>
+    <div><span style='background-color: #fc8d59'></span>Below Avg</div>
+    <div><span style='background-color: #ccc'></span>Other</div>
+</div>
 <nav id='filter-group' class='filter-group'></nav>
-<div id='swatches'></div>
+<div id='buttons'></div>
 
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29ybmVsbHJwYWwiLCJhIjoiY2o1bHdqZ3JuMzk2MzMybzh3dGc5Ymo5eCJ9.GZetHX1kypdxcVVSbil7jw'
@@ -106,7 +172,7 @@ map.addControl(new MapboxGeocoder({
 
 map.addControl(new mapboxgl.NavigationControl());
 
-var zoomThreshold = 3.5;
+var zoomThreshold = 3.4;
 
 var surgeries = [
 	"001 - HEART TRANSPLANT OR IMPLANT OF HEART ASSIST SYSTEM W MCC",
@@ -228,27 +294,37 @@ map.on('load', function() {
 		}
 	});
 
+	var stateLegendEl = document.getElementById('state-legend');
+	var avgLegendEl = document.getElementById('avg-legend');
+	var ratingLegendEl = document.getElementById('rating-legend');
+	var featureLegendEl = document.getElementById('feature-legend');
+
 	  sort.forEach(function(g) {
-	      var swatch = document.createElement('button');
-	      swatch.textContent = g;
-	      swatch.addEventListener('click', function() {
+	      var b = document.createElement('button');
+	      b.type = 'button';
+	      b.setAttribute("class", "btn btn-outline-primary");
+	      b.textContent = g;
+	      b.addEventListener('click', function() {
 	      	surgeries.forEach(function(name){
 	      		if (g=="avg_covered" || g=="avg_tot_pay" || g=="avg_med_pay") {
 	      			map.setPaintProperty(name, 'circle-color', {
 		      			property: g,
 		      			stops: [
-			                    [650, '#ffffd9'],
-			                    [1000, '#edf8b1'],
-			                    [1800, '#c7e9b4'],
-			                    [4000, '#7fcdbb'],
-			                    [12000, '#41b6c4'],
-			                    [30000, '#1d91c0'],
-			                    [60000, '#225ea8'],
-			                    [120000, '#253494'],
-			                    [240000, '#081d58']
+			                    [600, '#ffffd9'],
+			                    [1200, '#edf8b1'],
+			                    [2400, '#c7e9b4'],
+			                    [4800, '#7fcdbb'],
+			                    [9600, '#41b6c4'],
+			                    [19200, '#1d91c0'],
+			                    [38400, '#225ea8'],
+			                    [76800, '#253494'],
+			                    [200600, '#081d58']
 			                ]
-
 	      		});
+	      			stateLegendEl.style.display = 'none';
+	      			avgLegendEl.style.display = 'block';
+	      			ratingLegendEl.style.display = 'none';
+        			featureLegendEl.style.display = 'none';
 	      		} else if (g == "rating") {
 	      			map.setPaintProperty(name, 'circle-color', [
 			                'match',
@@ -260,6 +336,10 @@ map.on('load', function() {
 			                /* other */ '#d7191c'
 
 				      		]);
+	      			stateLegendEl.style.display = 'none';
+	      			avgLegendEl.style.display = 'none';
+	      			ratingLegendEl.style.display = 'block';
+        			featureLegendEl.style.display = 'none';
 
 	      		} else {
 	      			map.setPaintProperty(name, 'circle-color', [
@@ -271,15 +351,28 @@ map.on('load', function() {
 			                /* other */ '#ccc'
 
 				      		]);
+	      			stateLegendEl.style.display = 'none';
+	      			avgLegendEl.style.display = 'none';
+	      			ratingLegendEl.style.display = 'none';
+        			featureLegendEl.style.display = 'block';
 	      		}
 
 	      	});
 	          
 	      });
-	      swatches.appendChild(swatch);
+	      buttons.appendChild(b);
 	  });
 
-
+	  map.on('zoom', function() {
+	    if (map.getZoom() > zoomThreshold) {
+	      			stateLegendEl.style.display = 'none';
+	    } else {
+	      			stateLegendEl.style.display = 'block';
+	      			avgLegendEl.style.display = 'none';
+	      			ratingLegendEl.style.display = 'none';
+        			featureLegendEl.style.display = 'none';
+	    }
+	});
 
 });
 
