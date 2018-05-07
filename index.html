@@ -105,10 +105,16 @@ svg {
 
 <nav class="navbar navbar-dark bg-dark justify-content-between">
   <a class="navbar-brand text-light">Hospital Vis</a>
-  <form class="form-inline">
-    <input class="form-control mr-sm-2" type="search" placeholder="Search Proceedures" aria-label="Search">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Select</button>
-  </form>
+  <div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropdown button
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+  </div>
+</div>
 </nav>
 <br>
 <br>
@@ -284,8 +290,9 @@ map.on('load', function() {
 
         // Populate the popup and set its coordinates
         // based on the feature found.
+        popuphtml = e.features[0].properties.name + "<br>" + e.features[0].properties.surgery + "<br> Avg. Price:  " + e.features[0].properties.avg_tot_pay + "<br> Rating:  " + e.features[0].properties.rating + "<br> Safety:  " + e.features[0].properties.safety + "<br> Experience:  " + e.features[0].properties.experience;
         popup.setLngLat(coordinates)
-            .setHTML(description)
+            .setHTML(popuphtml)
             .addTo(map);
     });
 
