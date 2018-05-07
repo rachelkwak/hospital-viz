@@ -16,42 +16,23 @@
 
 #map { 
   position:relative; 
-  width: 100%;
+  width: 900px;
   height: 500px;
 }
 
-svg {
-	position: absolute;
-	width: 100%;
-	height: 500px;
-}
-
-.hidden {
-	display: none;
-}
-
-.show {
-	display: ;
-}
-
-#usa {
-	/*stroke: orange;*/
-	/*fill: blue;*/
-	fill-opacity: 0.5;
-}
 
 
     .filter-group {
         font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
         font-weight: 600;
-        /*
+        
         position: absolute;
         top: 10px;
         right: 100px;
-        */
+        
         z-index: 1;
         border-radius: 3px;
-        width: 100%;
+        width: 400px;
         color: #fff;
     }
 
@@ -102,67 +83,10 @@ svg {
 </head>
 
 <body>
+<div id="map"></div> 
+<nav id='filter-group' class='filter-group'></nav>
+<div id='swatches'></div>
 
-<nav class="navbar navbar-dark bg-dark justify-content-between">
-  <a class="navbar-brand text-light">Hospital Vis</a>
-  <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown button
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
-  </div>
-</div>
-</nav>
-<br>
-<br>
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-sm-6">
-			<div id="map"></div> 
-			<div id='swatches'></div>
-		</div>
-		<div class="col-sm-3">
-			<div id='filter-group' class='filter-group'></div>
-		</div>
-		<div class="col-sm-3">
-			<div class="card">
-  				<table class="table">
-  <thead>
-    <tr>
-      <th scope="col" id="hosName">[Hosptial Name]</th>
-      <th scope="col">Ratings</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row"><span id="procName">Proceedure</span> Average:</th>
-      <td id="procPrice" >$-</td>
-    </tr>
-    <tr>
-      <th scope="row">Overall Rating:</th>
-      <td id="hosRating" >0</td>
-    </tr>
-<!--     <tr>
-      <th scope="row">Effectiveness of Care:</th>
-      <td id="hosCare" class="text-success">Above Average</td>
-    </tr> -->
-    <tr>
-      <th scope="row">Safety of Care:</th>
-      <td id="hosSafety" >-</td>
-    </tr>
-    <tr>
-      <th scope="row">Patient Experience:</th>
-      <td id="hosExp" >-</td>
-    </tr>
-  </tbody>
-</table>
-			</div>
-		</div>
-	</div>
-</div> 
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29ybmVsbHJwYWwiLCJhIjoiY2o1bHdqZ3JuMzk2MzMybzh3dGc5Ymo5eCJ9.GZetHX1kypdxcVVSbil7jw'
 
@@ -290,25 +214,12 @@ map.on('load', function() {
 
         // Populate the popup and set its coordinates
         // based on the feature found.
-        popuphtml = e.features[0].properties.name + "<br>" + e.features[0].properties.surgery + "<br> Avg. Price:  " + e.features[0].properties.avg_tot_pay + "<br> Rating:  " + e.features[0].properties.rating + "<br> Safety:  " + e.features[0].properties.safety + "<br> Experience:  " + e.features[0].properties.experience;
+        popuphtml = e.features[0].properties.name + "<br>" + e.features[0].properties.surgery + "<br> Rating:  " + e.features[0].properties.rating + "<br> Safety:  " + e.features[0].properties.safety + "<br> Experience:  " + e.features[0].properties.experience;
         popup.setLngLat(coordinates)
             .setHTML(popuphtml)
             .addTo(map);
     });
 
-	map.on('click', layerID, function(e){
-		console.log(e.features[0]);
-		document.getElementById("hosName").innerHTML = e.features[0].properties.name;
-		document.getElementById("procName").innerHTML = e.features[0].properties.surgery;
-		document.getElementById("procPrice").innerHTML = e.features[0].properties.avg_tot_pay;
-		document.getElementById("hosRating").innerHTML = e.features[0].properties.rating;
-		document.getElementById("hosRating").className = e.features[0].properties.rating < 2.5 ? "text-danger" : e.features[0].properties.rating > 3.5  ? "text-success" : "text-warning";
-		document.getElementById("hosSafety").innerHTML = e.features[0].properties.safety;
-		document.getElementById("hosSafety").className = e.features[0].properties.safety === "Below the national average" ? "text-danger" : e.features[0].properties.safety === "Above the national average" ? "text-success" : "text-warning";
-		document.getElementById("hosExp").innerHTML = e.features[0].properties.experience;
-		document.getElementById("hosExp").className = e.features[0].properties.experience === "Below the national average" ? "text-danger" : e.features[0].properties.experience === "Above the national average" ? "text-success" : "text-warning";
-
-	});
 
     map.on('mouseleave', layerID, function() {
         map.getCanvas().style.cursor = '';
