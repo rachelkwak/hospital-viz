@@ -115,32 +115,63 @@ map.addControl(new MapboxGeocoder({
 
 map.addControl(new mapboxgl.NavigationControl());
 
-	map.on('load', function() {
-		map.addSource('hospitals', {
-		type: 'geojson',
-		data: './hospitals_processed.geojson'
-	});
+var zoomThreshold = 7;
 
-		map.addLayer({
-		  id: 'points',
-		  "interactive": true,
-		  type: 'circle',
-		  source: 'hospitals',
-		  paint: {
-		    'circle-radius': {
-		      	'base': 1.5,
-	            'stops': [[12, 2], [22, 100]]
-		    	},
+map.on('load', function() {
+	map.addSource('hospitals', {
+	type: 'geojson',
+	data: './hospitals_processed.geojson'
+});
 
-		    "circle-color": 'red',
-		  	}
+	map.addLayer({
+	  id: 'points',
+	  interactive: true,
+	  type: 'circle',
+	  source: 'hospitals',
+	  minzoom: zoomThreshold,
+	  paint: {
+	    'circle-radius': {
+	      	'base': 1.5,
+            'stops': [[12, 2], [22, 100]]
+	    	},
 
-		}, 'waterway-label');
-	});
+	    "circle-color": 'red',
+	  	}
 
+	}, 'waterway-label');
+});
 
+map.on('load', function() {
+	map.addSource('stateData', {
+	type: 'geojson',
+	data: './stateData.geojson'
+});
 
-
+    map.addLayer({
+        'id': 'state-cov',
+        'source': 'stateData',
+        'type': 'fill',
+        'maxzoom': zoomThreshold,
+        'paint': {
+            'fill-color': {
+                property: 'avg_covered',
+                // change colors
+                stops: [
+                    [0, '#F2F12D'],
+                    [5000, '#EED322'],
+                    [7500, '#E6B71E'],
+                    [10000, '#DA9C20'],
+                    [25000, '#CA8323'],
+                    [50000, '#B86B25'],
+                    [75000, '#A25626'],
+                    [100000, '#8B4225'],
+                    [250000, '#723122']
+                ] 
+            },
+            'fill-opacity': 0.75
+        }
+    }, 'waterway-label');
+});
 
 
 
