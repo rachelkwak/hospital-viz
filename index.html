@@ -36,8 +36,59 @@ svg {
 	fill-opacity: 0.5;
 }
 
+
+    .filter-group {
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        font-weight: 600;
+        position: absolute;
+        top: 10px;
+        right: 100px;
+        z-index: 1;
+        border-radius: 3px;
+        width: 400px;
+        color: #fff;
+    }
+
+    .filter-group input[type=checkbox]:first-child + label {
+        border-radius: 3px 3px 0 0;
+    }
+
+    .filter-group label:last-child {
+        border-radius: 0 0 3px 3px;
+        border: none;
+    }
+
+    .filter-group input[type=checkbox] {
+        display: none;
+    }
+
+    .filter-group input[type=checkbox] + label {
+        background-color: #3386c0;
+        display: block;
+        cursor: pointer;
+        padding: 10px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    }
+
+    .filter-group input[type=checkbox] + label {
+        background-color: #3386c0;
+        text-transform: capitalize;
+    }
+
+    .filter-group input[type=checkbox] + label:hover,
+    .filter-group input[type=checkbox]:checked + label {
+        background-color: #4ea0da;
+    }
+
+    .filter-group input[type=checkbox]:checked + label:before {
+        content: '✔';
+        margin-right: 5px;
+    }
+
 </style>
 <div id="map"></div> 
+<nav id='filter-group' class='filter-group'></nav>
+<div id='swatches'></div>
 
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29ybmVsbHJwYWwiLCJhIjoiY2o1bHdqZ3JuMzk2MzMybzh3dGc5Ymo5eCJ9.GZetHX1kypdxcVVSbil7jw'
@@ -58,30 +109,144 @@ map.addControl(new MapboxGeocoder({
 
 map.addControl(new mapboxgl.NavigationControl());
 
-var zoomThreshold = 7;
+var zoomThreshold = 3.5;
+
+var surgeries = [
+	"001 - HEART TRANSPLANT OR IMPLANT OF HEART ASSIST SYSTEM W MCC",
+	"202 - BRONCHITIS & ASTHMA W CC/MCC",
+	"293 - HEART FAILURE & SHOCK W/O CC/MCC",
+	"313 - CHEST PAIN",
+	"536 - FRACTURES OF HIP & PELVIS W/O MCC",
+	"552 - MEDICAL BACK PROBLEMS W/O MCC",
+	"652 - KIDNEY TRANSPLANT",
+	"765 - CESAREAN SECTION W CC/MCC",
+	"864 - FEVER",
+	"917 - POISONING & TOXIC EFFECTS OF DRUGS W MCC"
+];
+
+var sort = [
+  "avg_covered",
+  "avg_tot_pay",
+  "avg_med_pay",
+  "rating",
+  "mortality",
+  "safety",
+  "experience"
+];
+
+var filterGroup = document.getElementById('filter-group');
 
 map.on('load', function() {
 	map.addSource('hospitals', {
-	type: 'geojson',
-	data: './hospitals_processed.geojson'
-});
+		type: 'geojson',
+		data: './medicare_processed.geojson'
+	});
 
-	map.addLayer({
-	  id: 'points',
-	  interactive: true,
-	  type: 'circle',
-	  source: 'hospitals',
-	  minzoom: zoomThreshold,
-	  paint: {
-	    'circle-radius': {
-	      	'base': 1.5,
-            'stops': [[12, 2], [22, 100]]
-	    	},
+	surgeries.forEach(function(name) {
 
-	    "circle-color": 'red',
-	  	}
+		var layerID = name;
+		if (!map.getLayer(layerID)) {
+			map.addLayer({
+				id: layerID,
+				type: 'circle',
+				source: 'hospitals',
+				minzoom: zoomThreshold,
+				paint: {
+					'circle-radius': {
+						'base': 1.5,
+						'stops': [[12, 2], [22, 100]]
+					},
 
-	}, 'waterway-label');
+					"circle-color":  {
+		                property: 'avg_covered',
+		                // change colors
+		                stops: [
+		                    [0, '#F2F12D'],
+		                    [5000, '#EED322'],
+		                    [7500, '#E6B71E'],
+		                    [10000, '#DA9C20'],
+		                    [25000, '#CA8323'],
+		                    [50000, '#B86B25'],
+		                    [75000, '#A25626'],
+		                    [100000, '#8B4225'],
+		                    [250000, '#723122']
+		                ] 
+		             }
+				},
+				filter: ["==", "surgery", layerID]
+
+			}, 'waterway-label');
+
+			var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = layerID;
+            input.checked = true;
+            console.log(filterGroup);
+            filterGroup.appendChild(input);
+
+            var label = document.createElement('label');
+            label.setAttribute('for', layerID);
+            label.textContent = layerID;
+            filterGroup.appendChild(label);
+
+            // When the checkbox changes, update the visibility of the layer.
+            input.addEventListener('change', function(e) {
+                map.setLayoutProperty(layerID, 'visibility',
+                    e.target.checked ? 'visible' : 'none');
+            });
+		}
+	});
+
+	  sort.forEach(function(g) {
+	      var swatch = document.createElement('button');
+	      swatch.textContent = g;
+	      swatch.addEventListener('click', function() {
+	      	surgeries.forEach(function(name){
+	      		if (g=="avg_covered" || g=="avg_tot_pay" || g=="avg_med_pay") {
+	      			map.setPaintProperty(name, 'circle-color', {
+		      			property: g,
+		      			stops: [
+			                    [0, '#F2F12D'],
+			                    [5000, '#EED322'],
+			                    [7500, '#E6B71E'],
+			                    [10000, '#DA9C20'],
+			                    [25000, '#CA8323'],
+			                    [50000, '#B86B25'],
+			                    [75000, '#A25626'],
+			                    [100000, '#8B4225'],
+			                    [250000, '#723122']
+			                ]
+
+	      		});
+	      		} else if (g == "rating") {
+	      			map.setPaintProperty(name, 'circle-color', [
+			                'match',
+			                ['get', 'rating'],
+			                '5', '#fbb03b',
+			                '4', '#223b53',
+			                '3', '#e55e5e',
+			                '2', '#3bb2d0',
+			                /* other */ '#ccc'
+
+				      		]);
+	      		} else {
+	      			map.setPaintProperty(name, 'circle-color', [
+			                'match',
+			                ['get', g],
+			                'Below the national average', 'red',
+			                'Same as the national average', 'blue',
+			                'Above the national average', 'green',
+			                /* other */ '#ccc'
+
+				      		]);
+	      		}
+
+	      	});
+	          
+	      });
+	      swatches.appendChild(swatch);
+	  });
+
 });
 
 map.on('load', function() {
