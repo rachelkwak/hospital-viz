@@ -117,29 +117,7 @@ map.addControl(new mapboxgl.NavigationControl());
 
 var zoomThreshold = 7;
 
-map.on('load', function() {
-	map.addSource('hospitals', {
-	type: 'geojson',
-	data: './hospitals_processed.geojson'
-});
 
-	map.addLayer({
-	  id: 'points',
-	  interactive: true,
-	  type: 'circle',
-	  source: 'hospitals',
-	  minzoom: zoomThreshold,
-	  paint: {
-	    'circle-radius': {
-	      	'base': 1.5,
-            'stops': [[12, 2], [22, 100]]
-	    	},
-
-	    "circle-color": 'red',
-	  	}
-
-	}, 'waterway-label');
-});
 
 map.on('load', function() {
 	map.addSource('stateData', {
@@ -171,6 +149,30 @@ map.on('load', function() {
             'fill-opacity': 0.75
         }
     }, 'waterway-label');
+});
+
+map.on('load', function() {
+	map.addSource('hospitals', {
+	type: 'geojson',
+	data: './hospitals_processed.geojson'
+});
+
+	map.addLayer({
+	  id: 'points',
+	  interactive: true,
+	  type: 'circle',
+	  source: 'hospitals',
+	  minzoom: zoomThreshold,
+	  paint: {
+	    'circle-radius': {
+	      	'base': 1.5,
+            'stops': [[12, 2], [22, 100]]
+	    	},
+
+	    "circle-color": 'red',
+	  	}
+
+	}, 'waterway-label');
 });
 
 
