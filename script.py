@@ -134,6 +134,15 @@ with open('hospital.csv', 'r') as csv_file:
 # 	state_total[k] /= num_per_state[k]
 # 	state_medicare[k] /= num_per_state[k]
 
+# print state_covered[max(state_covered.keys(), key=(lambda k: state_covered[k]))]
+# print state_covered[min(state_covered.keys(), key=(lambda k: state_covered[k]))]
+
+# print state_total[max(state_total.keys(), key=(lambda k: state_total[k]))]
+# print state_total[min(state_total.keys(), key=(lambda k: state_total[k]))]
+
+# print state_medicare[max(state_medicare.keys(), key=(lambda k: state_medicare[k]))]
+# print state_medicare[min(state_medicare.keys(), key=(lambda k: state_medicare[k]))]
+
 # state_cost['covered_charge'] = state_covered
 # state_cost['total_pay'] = state_total
 # state_cost['medicare_pay'] = state_medicare
@@ -193,55 +202,57 @@ with open('hospital.csv', 'r') as csv_file:
 # 					medicare_processed.write(outString)
 
 
+###############
+# medicare csv edit
+###############
+
+# # the template. where data from the csv will be formatted to geojson
+# template = \
+#    ''' \
+#    { "type" : "Feature",
+#        "geometry" : {
+#            "type" : "Point",
+#            "coordinates" : [%s, %s]},
+#        "properties" : { "surgery" : "%s", "prov_id" : "%s", "name" : "%s", "avg_covered": %s, "avg_tot_pay": %s, "avg_med_pay": %s, "rating": "%s", "mortality": "%s", "safety": "%s", "experience": "%s"}
+#        },
+#    '''
 
 
-# the template. where data from the csv will be formatted to geojson
-template = \
-   ''' \
-   { "type" : "Feature",
-       "geometry" : {
-           "type" : "Point",
-           "coordinates" : [%s, %s]},
-       "properties" : { "surgery" : "%s", "prov_id" : "%s", "name" : "%s", "avg_covered": %s, "avg_tot_pay": %s, "avg_med_pay": %s, "rating": "%s", "mortality": "%s", "safety": "%s", "experience": "%s"}
-       },
-   '''
+# # the head of the geojson file
+# output = \
+#    ''' \
+
+# { "type" : "FeatureCollection",
+#    "features" : [
+#    '''
 
 
-# the head of the geojson file
-output = \
-   ''' \
+# medicare_processed = open('medicare_processed.csv', 'w')
 
-{ "type" : "FeatureCollection",
-   "features" : [
-   '''
+# s = set([001, 202, 293, 313, 536, 552, 652, 765, 864, 917])
 
+# with open('medicare.csv', 'r') as csvfile:
 
-medicare_processed = open('medicare_processed.csv', 'w')
+# 	dataRows = csv.reader(csvfile, delimiter=',')
+# 	for idx, line in enumerate(dataRows):
+# 		if idx != 0:
+# 			if int(line[1]) in hospitals:
+# 				d = hospitals[int(line[1])]
+# 				if d['long'] and d['lat'] and (int(line[0][:3]) in s):
+# 					output += template % (d['long'], d['lat'], line[0], int(line[1]), line[2], line[9], line[10], line[11], d['rating'], d['mortality'], d['safety'], d['experience'])
 
-s = set([001, 202, 293, 313, 536, 552, 652, 765, 864, 917])
+# # the tail of the geojson file
+# output += \
+#    ''' \
+#    ]
 
-with open('medicare.csv', 'r') as csvfile:
+# }
+#    '''
 
-	dataRows = csv.reader(csvfile, delimiter=',')
-	for idx, line in enumerate(dataRows):
-		if idx != 0:
-			if int(line[1]) in hospitals:
-				d = hospitals[int(line[1])]
-				if d['long'] and d['lat'] and (int(line[0][:3]) in s):
-					output += template % (d['long'], d['lat'], line[0], int(line[1]), line[2], line[9], line[10], line[11], d['rating'], d['mortality'], d['safety'], d['experience'])
-
-# the tail of the geojson file
-output += \
-   ''' \
-   ]
-
-}
-   '''
-
-# opens an geoJSON file to write the output
-outFileHandle = open("medicare_processed.geojson", "w")
-outFileHandle.write(output)
-outFileHandle.close()
+# # opens an geoJSON file to write the output
+# outFileHandle = open("medicare_processed.geojson", "w")
+# outFileHandle.write(output)
+# outFileHandle.close()
 
 
 

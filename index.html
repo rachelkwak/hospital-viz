@@ -158,15 +158,15 @@ map.on('load', function() {
 		                property: 'avg_covered',
 		                // change colors
 		                stops: [
-		                    [0, '#F2F12D'],
-		                    [5000, '#EED322'],
-		                    [7500, '#E6B71E'],
-		                    [10000, '#DA9C20'],
-		                    [25000, '#CA8323'],
-		                    [50000, '#B86B25'],
-		                    [75000, '#A25626'],
-		                    [100000, '#8B4225'],
-		                    [250000, '#723122']
+			                    [650, '#ffffd9'],
+			                    [1000, '#edf8b1'],
+			                    [1800, '#c7e9b4'],
+			                    [4000, '#7fcdbb'],
+			                    [12000, '#41b6c4'],
+			                    [30000, '#1d91c0'],
+			                    [60000, '#225ea8'],
+			                    [120000, '#253494'],
+			                    [240000, '#081d58']
 		                ] 
 		             }
 				},
@@ -214,7 +214,7 @@ map.on('load', function() {
 
         // Populate the popup and set its coordinates
         // based on the feature found.
-        popuphtml = e.features[0].properties.name + "<br>" + e.features[0].properties.surgery + "<br> Rating:  " + e.features[0].properties.rating + "<br> Safety:  " + e.features[0].properties.safety + "<br> Experience:  " + e.features[0].properties.experience;
+        popuphtml = e.features[0].properties.name + "<br> Rating:  " + e.features[0].properties.rating + "<br> Safety:  " + e.features[0].properties.safety + "<br> Experience:  " + e.features[0].properties.experience;
         popup.setLngLat(coordinates)
             .setHTML(popuphtml)
             .addTo(map);
@@ -237,15 +237,15 @@ map.on('load', function() {
 	      			map.setPaintProperty(name, 'circle-color', {
 		      			property: g,
 		      			stops: [
-			                    [0, '#AA4225'],
-			                    [5000, '#B0652A'],
-			                    [7500, '#B6892F'],
-			                    [10000, '#BBAE33'],
-			                    [25000, '#AFC138'],
-			                    [50000, '#95C73E'],
-			                    [75000, '#7BCC43'],
-			                    [100000, '#61D249'],
-			                    [250000, '#4ED855']
+			                    [650, '#ffffd9'],
+			                    [1000, '#edf8b1'],
+			                    [1800, '#c7e9b4'],
+			                    [4000, '#7fcdbb'],
+			                    [12000, '#41b6c4'],
+			                    [30000, '#1d91c0'],
+			                    [60000, '#225ea8'],
+			                    [120000, '#253494'],
+			                    [240000, '#081d58']
 			                ]
 
 	      		});
@@ -253,11 +253,11 @@ map.on('load', function() {
 	      			map.setPaintProperty(name, 'circle-color', [
 			                'match',
 			                ['get', 'rating'],
-			                '5', '#4ED855',
-			                '4', '#7BCC43',
-			                '3', '#AFC138',
-			                '2', '#B6892F',
-			                /* other */ '#AA4225'
+			                '5', '#2c7bb6',
+			                '4', '#abd9e9',
+			                '3', '#ffffbf',
+			                '2', '#fdae61',
+			                /* other */ '#d7191c'
 
 				      		]);
 
@@ -265,9 +265,9 @@ map.on('load', function() {
 	      			map.setPaintProperty(name, 'circle-color', [
 			                'match',
 			                ['get', g],
-			                'Below the national average', 'red',
-			                'Same as the national average', 'blue',
-			                'Above the national average', 'green',
+			                'Below the national average', '#fc8d59',
+			                'Same as the national average', '#ffffbf',
+			                'Above the national average', '#91bfdb',
 			                /* other */ '#ccc'
 
 				      		]);
@@ -299,15 +299,15 @@ map.on('load', function() {
                 property: 'avg_covered',
                 // change colors
                 stops: [
-                    [0, '#AA4225'],
-			                    [5000, '#B0652A'],
-			                    [7500, '#B6892F'],
-			                    [10000, '#BBAE33'],
-			                    [25000, '#AFC138'],
-			                    [50000, '#95C73E'],
-			                    [75000, '#7BCC43'],
-			                    [100000, '#61D249'],
-			                    [250000, '#4ED855']
+			                    [8510, '#ffffd9'],
+			                    [18410, '#edf8b1'],
+			                    [28310, '#c7e9b4'],
+			                    [38210, '#7fcdbb'],
+			                    [48110, '#41b6c4'],
+			                    [58010, '#1d91c0'],
+			                    [67910, '#225ea8'],
+			                    [77810, '#253494'],
+			                    [97700, '#081d58']
                 ] 
             },
             'fill-opacity': 0.75
