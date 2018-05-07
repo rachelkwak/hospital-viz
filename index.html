@@ -89,6 +89,11 @@ svg {
         margin-right: 5px;
     }
 
+        .mapboxgl-popup {
+        max-width: 400px;
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    }
+
 </style>
 <div id="map"></div> 
 <nav id='filter-group' class='filter-group'></nav>
@@ -212,7 +217,7 @@ map.on('load', function() {
 				paint: {
 					'circle-radius': {
 						'base': 1.5,
-						'stops': [[12, 2], [22, 100]]
+						'stops': [[7, 2], [15, 100]]
 					},
 
 					"circle-color":  {
@@ -252,6 +257,38 @@ map.on('load', function() {
                 map.setLayoutProperty(layerID, 'visibility',
                     e.target.checked ? 'visible' : 'none');
             });
+
+
+            	  var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+    });
+
+	   map.on('mouseenter', layerID, function(e) {
+        // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = 'pointer';
+
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = e.features[0].properties.name;
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        // Populate the popup and set its coordinates
+        // based on the feature found.
+        popup.setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(map);
+    });
+
+    map.on('mouseleave', layerID, function() {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+    });
 		}
 	});
 
@@ -305,6 +342,8 @@ map.on('load', function() {
 	      swatches.appendChild(swatch);
 	  });
 
+
+
 });
 
 map.on('load', function() {
@@ -339,29 +378,29 @@ map.on('load', function() {
     }, 'waterway-label');
 });
 
-map.on('load', function() {
-	map.addSource('hospitals', {
-	type: 'geojson',
-	data: './hospitals_processed.geojson'
-});
+// map.on('load', function() {
+// 	map.addSource('hospitals', {
+// 	type: 'geojson',
+// 	data: './hospitals_processed.geojson'
+// });
 
-	map.addLayer({
-	  id: 'points',
-	  interactive: true,
-	  type: 'circle',
-	  source: 'hospitals',
-	  minzoom: zoomThreshold,
-	  paint: {
-	    'circle-radius': {
-	      	'base': 1.5,
-            'stops': [[12, 2], [22, 100]]
-	    	},
+// 	map.addLayer({
+// 	  id: 'points',
+// 	  interactive: true,
+// 	  type: 'circle',
+// 	  source: 'hospitals',
+// 	  minzoom: zoomThreshold,
+// 	  paint: {
+// 	    'circle-radius': {
+// 	      	'base': 1.5,
+//             'stops': [[12, 2], [22, 100]]
+// 	    	},
 
-	    "circle-color": 'red',
-	  	}
+// 	    "circle-color": 'red',
+// 	  	}
 
-	}, 'waterway-label');
-});
+// 	}, 'waterway-label');
+// });
 
 
 
