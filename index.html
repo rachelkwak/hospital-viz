@@ -151,6 +151,18 @@ h1 {
     <div><span style='background-color: #edf8b1'></span>$ 1,200</div>
     <div><span style='background-color: #ffffd9'></span>$ 600</div>
 </div>
+<div id='state-legend-zoom' class='legend' style='display: none;'>
+	<h6>Cost</h6>
+	<div><span style='background-color: #081d58'></span>$ 200,600</div>
+    <div><span style='background-color: #253494'></span>$ 76,800</div>
+    <div><span style='background-color: #225ea8'></span>$ 38,400</div>
+    <div><span style='background-color: #1d91c0'></span>$ 19,200</div>
+    <div><span style='background-color: #41b6c4'></span>$ 9,600</div>
+    <div><span style='background-color: #7fcdbb'></span>$ 4,800</div>
+    <div><span style='background-color: #c7e9b4'></span>$ 2,400</div>
+    <div><span style='background-color: #edf8b1'></span>$ 1,200</div>
+    <div><span style='background-color: #ffffd9'></span>$ 600</div>
+</div>
 <div id='rating-legend' class='legend' style='display: none;'>
     <h6>Rating</h6>
     <div><span style='background-color: #2c7bb6'></span>5</div>
@@ -385,7 +397,24 @@ map.on('load', function() {
 
 	  map.on('zoom', function() {
 	    if (map.getZoom() > zoomThreshold) {
+	    	if (g=="avg_covered" || g=="avg_tot_pay" || g=="avg_med_pay"){
+	    			stateLegendEl.style.display = 'none';
+	      			avgLegendEl.style.display = 'block';
+	      			ratingLegendEl.style.display = 'none';
+        			featureLegendEl.style.display = 'none';
+	    	}
+	    	else if (g == "rating"){
+	    			stateLegendEl.style.display = 'none';
+	      			avgLegendEl.style.display = 'none';
+	      			ratingLegendEl.style.display = 'block';
+        			featureLegendEl.style.display = 'none';
+	    	}
+	    	else if (g == "mortality" || g=="experience" || g=="safety"){ 
 	      			stateLegendEl.style.display = 'none';
+	      			avgLegendEl.style.display = 'none';
+	      			ratingLegendEl.style.display = 'none';
+        			featureLegendEl.style.display = 'block';
+        	}
 	    } else {
 	      			stateLegendEl.style.display = 'block';
 	      			avgLegendEl.style.display = 'none';
