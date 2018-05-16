@@ -85,8 +85,16 @@ h1 {
 
 
 <body>
-<h1>Check My Healthcare Costs</h1>
-<select id='dropdown' class='dropdown' onchange="dropfunc(this)"></select>
+<nav class="navbar navbar-dark bg-dark justify-content-between">
+  <h4 class="navbar-brand">Check My Healthcare Costs</h1>
+    <form class="navbar-form navbar-right text-white form-inline">
+        <label class="control-label">Select Proceedure </label>
+        <div class="form-group">       
+        <select id='dropdown' class='dropdown selectpicker form-control form-inline mr-sm-3' onchange="dropfunc(this)"></select>
+        </div>
+    </form>
+</nav>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-8">
