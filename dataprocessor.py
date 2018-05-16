@@ -230,7 +230,7 @@ with open('medicare.csv', 'r') as csvfile:
 		surgery = keyString[2]
 		print state
 		print surgery
-		surgery_state_averages.write(surgery + "," + state + "," + str(myDict[key]) + "\n")
+		surgery_state_averages.write("\"" + surgery + "\"," + state + "," + str(myDict[key]) + "\n")
 
 		
 
