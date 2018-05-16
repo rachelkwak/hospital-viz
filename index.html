@@ -15,6 +15,11 @@
 
 .bar { fill: steelblue; }
 
+#bar {
+  width: 400px;
+  height: 500px;
+}
+
 
 #map { 
   position:relative; 
@@ -25,57 +30,10 @@
 }
 
 
-
-    .filter-group {
-        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-        font-weight: 600;
-        
-        position: absolute;
-        top: 68px;
-        right: 100px;
-        
-        z-index: 1;
-        border-radius: 3px;
-        width: 400px;
-        color: #fff;
-    }
-
-    .filter-group input[type=checkbox]:first-child + label {
-        border-radius: 3px 3px 0 0;
-    }
-
-    .filter-group label:last-child {
-        border-radius: 0 0 3px 3px;
-        border: none;
-    }
-
-    .filter-group input[type=checkbox] {
-        display: none;
-    }
-
-    .filter-group input[type=checkbox] + label {
-        background-color: #3386c0;
-        display: block;
-        cursor: pointer;
-        padding: 10px;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.25);
-    }
-
-    .filter-group input[type=checkbox] + label {
-        background-color: #3386c0;
-        text-transform: capitalize;
-    }
-
-    .filter-group input[type=checkbox] + label:hover,
-    .filter-group input[type=checkbox]:checked + label {
-        background-color: #4ea0da;
-    }
-
-    .filter-group input[type=checkbox]:checked + label:before {
-        content: '✔';
-        margin-right: 5px;
-    }
-
+.dropdown {
+    position: relative;
+    margin-left: 10px;
+}
         .mapboxgl-popup {
         max-width: 400px;
         font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
@@ -127,7 +85,17 @@ h1 {
 
 <body>
 <h1>Check My Healthcare Costs</h1>
-<div id="map"></div> 
+<select id='dropdown' class='dropdown' onchange="dropfunc(this)"></select>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8">
+            <div id="map"></div> 
+        </div>
+        <div class="col-4">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
 <div id='state-legend' class='legend'>
     <h6>Avg Cost</h6>
     <div><span style='background-color: #081d58'></span>$ 97,700</div>
@@ -181,7 +149,8 @@ h1 {
     <div><span style='background-color: #fc8d59'></span>Below Avg</div>
     <div><span style='background-color: #ccc'></span>Other</div>
 </div>
-<nav id='filter-group' class='filter-group'></nav>
+
+
 <div class='col-xs-3'>
 	<h6>View Hospitals By:</h6>
 	<div id='buttons' class="btn btn-space"></div>
@@ -231,7 +200,7 @@ var sort = {
 }
 
 
-var filterGroup = document.getElementById('filter-group');
+var dropmenu = document.getElementById('dropdown');
 
 map.on('load', function() {
 	map.addSource('hospitals', {
@@ -274,29 +243,20 @@ map.on('load', function() {
 
 			}, 'waterway-label');
 
-			var input = document.createElement('input');
-            input.type = 'checkbox';
-            input.id = layerID;
-            input.checked = true;
-            console.log(filterGroup);
-            filterGroup.appendChild(input);
+            console.log(dropmenu.options)
 
-            var label = document.createElement('label');
-            label.setAttribute('for', layerID);
-            label.textContent = layerID;
-            filterGroup.appendChild(label);
-
-            // When the checkbox changes, update the visibility of the layer.
-            input.addEventListener('change', function(e) {
-                map.setLayoutProperty(layerID, 'visibility',
-                    e.target.checked ? 'visible' : 'none');
-            });
+            var opt = document.createElement("option"); 
+            opt.text = layerID;
+            opt.value = layerID;
+            dropmenu.options.add(opt);
 
 
             	  var popup = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false
     });
+
+
 
 	   map.on('mouseenter', layerID, function(e) {
         // Change the cursor style as a UI indicator.
@@ -399,29 +359,11 @@ map.on('load', function() {
 
 	  map.on('zoom', function() {
 	    if (map.getZoom() > zoomThreshold) {
-	    	if (g=="avg_covered" || g=="avg_tot_pay" || g=="avg_med_pay"){
-	    			stateLegendEl.style.display = 'none';
-	      			avgLegendEl.style.display = 'block';
-	      			ratingLegendEl.style.display = 'none';
-        			featureLegendEl.style.display = 'none';
-	    	}
-	    	else if (g == "rating"){
-	    			stateLegendEl.style.display = 'none';
-	      			avgLegendEl.style.display = 'none';
-	      			ratingLegendEl.style.display = 'block';
-        			featureLegendEl.style.display = 'none';
-	    	}
-	    	else if (g == "mortality" || g=="experience" || g=="safety"){ 
-	      			stateLegendEl.style.display = 'none';
-	      			avgLegendEl.style.display = 'none';
-	      			ratingLegendEl.style.display = 'none';
-        			featureLegendEl.style.display = 'block';
-        	}
+            stateLegendEl.style.display = 'none';
+            avgLegendEl.style.display = 'block';
 	    } else {
-	      			stateLegendEl.style.display = 'block';
-	      			avgLegendEl.style.display = 'none';
-	      			ratingLegendEl.style.display = 'none';
-        			featureLegendEl.style.display = 'none';
+            stateLegendEl.style.display = 'block';
+            avgLegendEl.style.display = 'none';
 	    }
 	});
 
@@ -459,133 +401,15 @@ map.on('load', function() {
     }, 'waterway-label');
 });
 
-// map.on('load', function() {
-// 	map.addSource('hospitals', {
-// 	type: 'geojson',
-// 	data: './hospitals_processed.geojson'
-// });
 
-// 	map.addLayer({
-// 	  id: 'points',
-// 	  interactive: true,
-// 	  type: 'circle',
-// 	  source: 'hospitals',
-// 	  minzoom: zoomThreshold,
-// 	  paint: {
-// 	    'circle-radius': {
-// 	      	'base': 1.5,
-//             'stops': [[12, 2], [22, 100]]
-// 	    	},
-
-// 	    "circle-color": 'red',
-// 	  	}
-
-// 	}, 'waterway-label');
-// });
+    function dropfunc(obj) {
+        surgeries.forEach(function(d){
+            map.setLayoutProperty(d, 'visibility',
+      d==obj.value ? 'visible' : 'none');
+        });
+    }
 
 
-
-
-
-
-
-
-
-// var container = map.getCanvasContainer();
-// var svg_map = d3.select(container).append("svg");
-// var svg_data = d3.select(container).append("svg");
-
-// var transform = d3.geoTransform({
-//     point: projectPoint
-// });
-// var path = d3.geoPath().projection(transform);
-
-
-// d3.json("us.json", function(err, data) {
-// 	d3.json("state_cost.json", function(err, state_data) {
-// 		d3.json("hospital.json", function(err, hospital) {
-			
-// 			hospital.forEach(function(d) {
-// 				if (d.long&& d.lat){
-// 					d.coord = new mapboxgl.LngLat(d.long, d.lat);
-// 				}
-//             });
-// 			var color = d3.scaleLinear()
-// 								.domain([18000, 97700])  
-// 								.range(["white", "blue"]); 
-
-// 		    var featureElement = svg_map.selectAll("path")
-// 		        .data(topojson.feature(data, data.objects.states).features)
-// 		        .enter()
-// 		        .append("path")
-// 		        .attr("d", path)
-// 		        .attr("id", "usa")
-// 		        .style("fill", function(d) {return color(state_data[d.properties.name]); });
-
-// 		    var circles = svg_data.attr("id", "hospital").selectAll("circle").data(hospital);
-
-// 		    map.on("viewreset", update)
-// 		    map.on("movestart", function() {
-// 		        svg_map.classed("hidden", true);
-// 		        svg_data.classed("hidden", true);
-// 		    });
-// 		    map.on("moveend", function() {
-// 		        update()
-		        
-// 		        if (map.getZoom() < 7) {
-// 		            svg_map.classed("hidden", false);
-// 		            svg_data.classed("hidden", true);
-// 		        } else {
-// 		        	svg_data.classed("hidden", false);
-// 		        }
-// 		    })
-
-// 		    function update() {
-// 		        featureElement.attr("d", path);
-
-// 		        if (map.getZoom() >= 7) {
-// 			        circles.enter().selectAll('circle').remove();
-
-// 				    circles.enter()
-// 		                    .append("circle")
-// 		                    .attr("cx", function(d) {
-// 		                        if (d.coord) {
-// 		                        	var c = map.project(d.coord);
-// 		                            return c['x'];
-// 		                        }
-// 		                    })
-// 		                    .attr("cy", function(d) {
-// 		                        if (d.coord) {
-// 		                        	var c = map.project(d.coord);
-// 		                            return c['y'];
-// 		                        }
-// 		                    })
-// 		                    .attr("r", 4)
-// 		                    .attr('fill-opacity', 0.4)
-// 		                    .style("fill", "blue")
-// 		        }
-
-// 		    }
-
-		    
-// 		});
-//     });
-// });
-
-// function projectPoint(lon, lat) {
-//     var point = map.project(new mapboxgl.LngLat(lon, lat));
-//     this.stream.point(point.x, point.y);
-// }
-
-</script>
-
-
-
-
-
-
-
-<script>
 	// 1. listen for change in radio buttons 
 	// document.getElementById("radio button").on("change")
 	// var surgerytype
@@ -603,7 +427,7 @@ d3.csv("surgery_state_averages.csv", function(err, data) {
 
 	// set the dimensions and margins of the graph
 	var margin = {top: 20, right: 20, bottom: 30, left: 40},
-	    width = 960 - margin.left - margin.right,
+	    width = 400 - margin.left - margin.right,
 	    height = 500 - margin.top - margin.bottom;
 
 	// set the ranges
@@ -617,7 +441,7 @@ d3.csv("surgery_state_averages.csv", function(err, data) {
 	// append the svg object to the body of the page
 	// append a 'group' element to 'svg'
 	// moves the 'group' element to the top left margin
-	var svg = d3.select("body").append("svg")
+	var svg = d3.select("#bar").append("svg")
 	    .attr("width", width + margin.left + margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
 	  .append("g")
@@ -635,8 +459,8 @@ d3.csv("surgery_state_averages.csv", function(err, data) {
 	      .data(data)
 	    .enter().append("rect")
 	      .attr("class", "bar")
-	      //.attr("x", function(d) { return x(d.sales); })
-	      .attr("width", function(d) {console.log(x(d.Cost)); return x(d.Cost); } )
+	      // .attr("x", function(d) { return x(d.sales); })
+	      .attr("width", function(d) { return x(d.Cost); } )
 	      .attr("y", function(d) { return y(d.State); })
 	      .attr("height", y.bandwidth());
 
