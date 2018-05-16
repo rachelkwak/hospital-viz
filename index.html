@@ -18,7 +18,7 @@
 }
 
 #bar {
-    width: 400px;
+    width: 100%;
     height: 500px;
 }
 
@@ -26,7 +26,7 @@
     position: relative;
     margin-top: 10px;
     margin-left: 10px;
-    width: 900px;
+    width: 100%;
     height: 500px;
 }
 
@@ -48,8 +48,36 @@
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     padding: 10px;
     position: absolute;
-    right: 540px;
-    z-index: 1;
+    left: 85%;
+    z-index: 3;
+}
+
+@media (min-width: 768px){
+.legend {
+    background-color: #fff;
+    border-radius: 3px;
+    bottom: 255px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    padding: 10px;
+    position: absolute;
+    left: 55%;
+    z-index: 3;
+}
+}
+
+@media (min-width: 1024px){
+.legend {
+    background-color: #fff;
+    border-radius: 3px;
+    bottom: 255px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    padding: 10px;
+    position: absolute;
+    left: 58%;
+    z-index: 3;
+}
 }
 
 .legend h6 {
@@ -97,10 +125,10 @@ h1 {
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-8">
+        <div class="col-md-8">
             <div id="map"></div> 
         </div>
-        <div class="col-4">
+        <div class="col-md-4">
             <div id="bar"></div>
         </div>
     </div>
@@ -437,13 +465,15 @@ d3.csv("surgery_state_averages.csv", function(err, data) {
     // 2. Look for surgerytype match in data , save in arr surgeries
 
     // set the dimensions and margins of the graph
+    
+
     var margin = {
             top: 20,
             right: 20,
             bottom: 30,
             left: 40
         },
-        width = 400 - margin.left - margin.right,
+        width = parseInt(d3.select("#bar").node().getBoundingClientRect().width) - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
     // set the ranges
