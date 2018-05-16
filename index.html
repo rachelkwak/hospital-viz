@@ -121,18 +121,6 @@ h1 {
     <div><span style='background-color: #edf8b1'></span>$ 1,200</div>
     <div><span style='background-color: #ffffd9'></span>$ 600</div>
 </div>
-<div id='state-legend-zoom' class='legend' style='display: none;'>
-	<h6>Cost</h6>
-	<div><span style='background-color: #081d58'></span>$ 200,600</div>
-    <div><span style='background-color: #253494'></span>$ 76,800</div>
-    <div><span style='background-color: #225ea8'></span>$ 38,400</div>
-    <div><span style='background-color: #1d91c0'></span>$ 19,200</div>
-    <div><span style='background-color: #41b6c4'></span>$ 9,600</div>
-    <div><span style='background-color: #7fcdbb'></span>$ 4,800</div>
-    <div><span style='background-color: #c7e9b4'></span>$ 2,400</div>
-    <div><span style='background-color: #edf8b1'></span>$ 1,200</div>
-    <div><span style='background-color: #ffffd9'></span>$ 600</div>
-</div>
 <div id='rating-legend' class='legend' style='display: none;'>
     <h6>Rating</h6>
     <div><span style='background-color: #2c7bb6'></span>5</div>
@@ -242,8 +230,6 @@ map.on('load', function() {
 				filter: ["==", "surgery", layerID]
 
 			}, 'waterway-label');
-
-            console.log(dropmenu.options)
 
             var opt = document.createElement("option"); 
             opt.text = layerID;
@@ -360,10 +346,11 @@ map.on('load', function() {
 	  map.on('zoom', function() {
 	    if (map.getZoom() > zoomThreshold) {
             stateLegendEl.style.display = 'none';
-            avgLegendEl.style.display = 'block';
 	    } else {
             stateLegendEl.style.display = 'block';
             avgLegendEl.style.display = 'none';
+            ratingLegendEl.style.display = 'none';
+            featureLegendEl.style.display = 'none';
 	    }
 	});
 
@@ -417,13 +404,10 @@ map.on('load', function() {
 	// State, Cost, Surgery
 
 
+
 d3.csv("surgery_state_averages.csv", function(err, data) {
 
 	// 2. Look for surgerytype match in data , save in arr surgeries
-
-	Object.keys(data).forEach(function(key) {
-	    console.log(key, data[key]);
-	});
 
 	// set the dimensions and margins of the graph
 	var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -438,40 +422,63 @@ d3.csv("surgery_state_averages.csv", function(err, data) {
 	var x = d3.scaleLinear()
 	          .range([0, width]);
 	          
-	// append the svg object to the body of the page
-	// append a 'group' element to 'svg'
-	// moves the 'group' element to the top left margin
-	var svg = d3.select("#bar").append("svg")
-	    .attr("width", width + margin.left + margin.right)
-	    .attr("height", height + margin.top + margin.bottom)
-	  .append("g")
-	    .attr("transform", 
-	          "translate(" + margin.left + "," + margin.top + ")");
 
-	  // Scale the range of the data in the domains
-	  xRange = data.map(function(d){ return parseInt(d.Cost)});
-	  x.domain([0, d3.max(xRange)]);
-	  y.domain(data.map(function(d) { return d.State; }));
-	  //y.domain([0, d3.max(data, function(d) { return d.sales; })]);
 
-	  // append the rectangles for the bar chart
-	  svg.selectAll(".bar")
-	      .data(data)
-	    .enter().append("rect")
-	      .attr("class", "bar")
-	      // .attr("x", function(d) { return x(d.sales); })
-	      .attr("width", function(d) { return x(d.Cost); } )
-	      .attr("y", function(d) { return y(d.State); })
-	      .attr("height", y.bandwidth());
+    var surgerytype = surgeries[0];
+    update(surgerytype);
 
-	  // add the x Axis
-	  svg.append("g")
-	      .attr("transform", "translate(0," + height + ")")
-	      .call(d3.axisBottom(x));
+    dropmenu.addEventListener('change', function() {
+        surgerytype = dropmenu.value;
+        d3.select("svg").remove();
+        update(surgerytype);
+    });
 
-	  // add the y Axis
-	  svg.append("g")
-	      .call(d3.axisLeft(y));
+
+    function update(s) {
+        var filteredData = data.filter(function(item){
+            return item.Surgery==s;         
+        });
+
+        // Object.keys(data).forEach(function(key) {
+        //     console.log(key, data[key]);
+        // });
+
+            // append the svg object to the body of the page
+    // append a 'group' element to 'svg'
+    // moves the 'group' element to the top left margin
+    var svg = d3.select("#bar").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", 
+              "translate(" + margin.left + "," + margin.top + ")");
+
+                  // Scale the range of the data in the domains
+          xRange = filteredData.map(function(d){ return parseInt(d.Cost)});
+          x.domain([0, d3.max(xRange)]);
+          y.domain(filteredData.map(function(d) { return d.State; }));
+          //y.domain([0, d3.max(data, function(d) { return d.sales; })]);
+
+          // append the rectangles for the bar chart
+          svg.selectAll(".bar")
+              .data(filteredData)
+            .enter().append("rect")
+              .attr("class", "bar")
+              // .attr("x", function(d) { return x(d.sales); })
+              .attr("width", function(d) { return x(d.Cost); } )
+              .attr("y", function(d) { return y(d.State); })
+              .attr("height", y.bandwidth());
+
+          // add the x Axis
+          svg.append("g")
+              .attr("transform", "translate(0," + height + ")")
+              .call(d3.axisBottom(x));
+
+          // add the y Axis
+          svg.append("g")
+              .call(d3.axisLeft(y));
+    }
+
 
 });
 
