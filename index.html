@@ -124,8 +124,8 @@ p {
             <h1>HEALTHCARE EXPLORER</h1>
         </div>
         <div class="col-md-10">
-            <p>Healthcare costs in the United States are significantly higher than that of other countries in the industrialized world. A single treatment or surgery bill can cause a huge blow on the finances of most middle class Americans. According to a 2014 Gallup poll, 1 in 3 Americans have put off medical treatment for this reason. </br>
-            The interactive visualization below compares the cost and quality of surgeries across hospitals in the country. <hr> </p>
+            <p>&emsp;&emsp;&emsp;Healthcare costs in the United States are significantly higher than that of other countries in the industrialized world. A single treatment or surgery bill can cause a huge blow on the finances of most middle class Americans. According to a 2014 Gallup poll, 1 in 3 Americans have put off medical treatment for this reason. </br>
+            &emsp;&emsp;&emsp;The interactive visualization below compares the cost and quality of surgeries across hospitals in the country. To view the average cost of all surgeries for each state, zoom out on the map. <hr> </p>
         </div>
         <div class="col-md-10 text-center">
             <h6>To begin, pick a surgery or treatment below</h6>
@@ -141,7 +141,7 @@ p {
         <div class="col-md-8">
             <h6>Map of State Costs</h6>
             <div id="map"></div> 
-            <div id='state-legend' class='legend'>
+            <div id='state-legend' class='legend' style='display: none;'>
                 <h6>Avg Cost</h6>
                 <div><span style='background-color: #081d58'></span>$ 97,700</div>
                 <div><span style='background-color: #253494'></span>$ 77,810</div>
@@ -154,7 +154,7 @@ p {
                 <div><span style='background-color: #ffffd9'></span>$ 8,510</div>
             </div>
 
-            <div id='avg-legend' class='legend' style='display: none;'>
+            <div id='avg-legend' class='legend'>
                 <h6>Cost</h6>
                 <div><span style='background-color: #081d58'></span>$ 200,600</div>
                 <div><span style='background-color: #253494'></span>$ 76,800</div>
@@ -619,6 +619,9 @@ map.on('load', function() {
     map.on('zoom', function() {
         if (map.getZoom() > zoomThreshold) {
             stateLegendEl.style.display = 'none';
+            avgLegendEl.style.display = 'block';
+            ratingLegendEl.style.display = 'none';
+            featureLegendEl.style.display = 'none';
         } else {
             stateLegendEl.style.display = 'block';
             avgLegendEl.style.display = 'none';
