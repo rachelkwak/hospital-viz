@@ -120,17 +120,17 @@ p {
 <body>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-10 text-center">
             <h1>HEALTHCARE EXPLORER</h1>
         </div>
         <div class="col-md-10">
             <p>Healthcare costs in the United States are significantly higher than that of other countries in the industrialized world. A single treatment or surgery bill can cause a huge blow on the finances of most middle class Americans. According to a 2014 Gallup poll, 1 in 3 Americans have put off medical treatment for this reason. </br>
-            The interactive visualization below compares the cost and quality of surgeries across hospitals in the country. </br> </p>
+            The interactive visualization below compares the cost and quality of surgeries across hospitals in the country. <hr> </p>
         </div>
-        </br>
-        <div class="col-md-8 text-center">
+        <div class="col-md-10 text-center">
             <h6>To begin, pick a surgery or treatment below</h6>
             <select id='dropdown' class='dropdown' onchange="dropfunc(this)"></select>
+            <hr>
         </div>
     </div>
     <div class='col-xs-3'>
@@ -139,6 +139,7 @@ p {
     </div>
     <div class="row">
         <div class="col-md-8">
+            <h6>Map of State Costs</h6>
             <div id="map"></div> 
             <div id='state-legend' class='legend'>
                 <h6>Avg Cost</h6>
@@ -183,7 +184,13 @@ p {
             </div>
         </div>
         <div class="col-md-4">
+            <h6>Surgery Cost Average for Each State</h6>
             <div id="bar"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <br><br>
         </div>
     </div>
 </div>
