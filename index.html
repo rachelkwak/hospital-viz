@@ -13,37 +13,38 @@
 
 <style>
 
-.bar { fill: steelblue; }
+.bar {
+    fill: steelblue;
+}
 
 #bar {
-  width: 400px;
-  height: 500px;
+    width: 400px;
+    height: 500px;
 }
 
-
-#map { 
-  position:relative; 
-  margin-top: 10px;
-  margin-left: 10px;
-  width: 900px;
-  height: 500px;
+#map {
+    position: relative;
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 900px;
+    height: 500px;
 }
-
 
 .dropdown {
     position: relative;
     margin-left: 10px;
 }
-        .mapboxgl-popup {
-        max-width: 400px;
-        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-    }
 
-    .legend {
+.mapboxgl-popup {
+    max-width: 400px;
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.legend {
     background-color: #fff;
     border-radius: 3px;
     bottom: 255px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
     padding: 10px;
     position: absolute;
@@ -68,13 +69,13 @@
 }
 
 h6 {
-	margin-top: 15px;
-	margin-left: 15px;
+    margin-top: 15px;
+    margin-left: 15px;
 }
 
 h1 {
-	margin-left: 10px;
-	margin-top: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
 }
 
 </style>
@@ -143,6 +144,8 @@ h1 {
 	<h6>View Hospitals By:</h6>
 	<div id='buttons' class="btn btn-space"></div>
 </div>
+
+
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoiY29ybmVsbHJwYWwiLCJhIjoiY2o1bHdqZ3JuMzk2MzMybzh3dGc5Ymo5eCJ9.GZetHX1kypdxcVVSbil7jw'
 
@@ -165,202 +168,218 @@ map.addControl(new mapboxgl.NavigationControl());
 var zoomThreshold = 3.4;
 
 var surgeries = [
-	"001 - HEART TRANSPLANT OR IMPLANT OF HEART ASSIST SYSTEM W MCC",
-	"202 - BRONCHITIS & ASTHMA W CC/MCC",
-	"293 - HEART FAILURE & SHOCK W/O CC/MCC",
-	"313 - CHEST PAIN",
-	"536 - FRACTURES OF HIP & PELVIS W/O MCC",
-	"552 - MEDICAL BACK PROBLEMS W/O MCC",
-	"652 - KIDNEY TRANSPLANT",
-	"765 - CESAREAN SECTION W CC/MCC",
-	"864 - FEVER",
-	"917 - POISONING & TOXIC EFFECTS OF DRUGS W MCC"
+    "001 - HEART TRANSPLANT OR IMPLANT OF HEART ASSIST SYSTEM W MCC",
+    "202 - BRONCHITIS & ASTHMA W CC/MCC",
+    "293 - HEART FAILURE & SHOCK W/O CC/MCC",
+    "313 - CHEST PAIN",
+    "536 - FRACTURES OF HIP & PELVIS W/O MCC",
+    "552 - MEDICAL BACK PROBLEMS W/O MCC",
+    "652 - KIDNEY TRANSPLANT",
+    "765 - CESAREAN SECTION W CC/MCC",
+    "864 - FEVER",
+    "917 - POISONING & TOXIC EFFECTS OF DRUGS W MCC"
+];
+
+var pretty_names = [
+    "Heart Transplant",
+    "Bronchitis and Asthma",
+    "Heart Failure and Shock",
+    "Chest Pain",
+    "Hip and Pelvis Fractures",
+    "Medical Back Problems",
+    "Kidney Transplant",
+    "Cesarean Section",
+    "Fever",
+    "Drug Poisoning"
 ];
 
 var sort = {
-	"avg_covered": "Average Covered Charges",
-  "avg_tot_pay": "Average Total Payments",
-  "avg_med_pay": "Average Medicare Payments",
-  "rating": "Hospital Rating",
-  "mortality": "Mortality Rating",
-  "safety": "Safety Rating",
-  "experience": "Experience Rating"
+    "avg_covered": "Average Covered Charges",
+    "avg_tot_pay": "Average Total Payments",
+    "avg_med_pay": "Average Medicare Payments",
+    "rating": "Hospital Rating",
+    "mortality": "Mortality Rating",
+    "safety": "Safety Rating",
+    "experience": "Experience Rating"
 }
 
 
 var dropmenu = document.getElementById('dropdown');
 
 map.on('load', function() {
-	map.addSource('hospitals', {
-		type: 'geojson',
-		data: './medicare_processed.geojson'
-	});
+    map.addSource('hospitals', {
+        type: 'geojson',
+        data: './medicare_processed.geojson'
+    });
 
-	surgeries.forEach(function(name) {
+    surgeries.forEach(function(name) {
 
-		var layerID = name;
-		if (!map.getLayer(layerID)) {
-			map.addLayer({
-				id: layerID,
-				type: 'circle',
-				source: 'hospitals',
-				minzoom: zoomThreshold,
-				paint: {
-					'circle-radius': {
-						'base': 1.5,
-						'stops': [[7, 2], [15, 100]]
-					},
+        var layerID = name;
+        if (!map.getLayer(layerID)) {
+            map.addLayer({
+                id: layerID,
+                type: 'circle',
+                source: 'hospitals',
+                minzoom: zoomThreshold,
+                paint: {
+                    'circle-radius': {
+                        'base': 1.5,
+                        'stops': [
+                            [7, 2],
+                            [15, 100]
+                        ]
+                    },
 
-					"circle-color":  {
-		                property: 'avg_covered',
-		                // change colors
-		                stops: [
-			                    [650, '#ffffd9'],
-			                    [1000, '#edf8b1'],
-			                    [1800, '#c7e9b4'],
-			                    [4000, '#7fcdbb'],
-			                    [12000, '#41b6c4'],
-			                    [30000, '#1d91c0'],
-			                    [60000, '#225ea8'],
-			                    [120000, '#253494'],
-			                    [240000, '#081d58']
-		                ] 
-		             }
-				},
-				filter: ["==", "surgery", layerID]
+                    "circle-color": {
+                        property: 'avg_covered',
+                        // change colors
+                        stops: [
+                            [650, '#ffffd9'],
+                            [1000, '#edf8b1'],
+                            [1800, '#c7e9b4'],
+                            [4000, '#7fcdbb'],
+                            [12000, '#41b6c4'],
+                            [30000, '#1d91c0'],
+                            [60000, '#225ea8'],
+                            [120000, '#253494'],
+                            [240000, '#081d58']
+                        ]
+                    }
+                },
+                filter: ["==", "surgery", layerID]
 
-			}, 'waterway-label');
+            }, 'waterway-label');
 
-            var opt = document.createElement("option"); 
-            opt.text = layerID;
+            var opt = document.createElement("option");
+            opt.text = pretty_names[surgeries.indexOf(layerID)];
             opt.value = layerID;
             dropmenu.options.add(opt);
 
 
-            	  var popup = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false
-    });
+            var popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false
+            });
 
 
 
-	   map.on('mouseenter', layerID, function(e) {
-        // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = 'pointer';
+            map.on('mouseenter', layerID, function(e) {
+                // Change the cursor style as a UI indicator.
+                map.getCanvas().style.cursor = 'pointer';
 
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        var description = e.features[0].properties.name;
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var description = e.features[0].properties.name;
 
-        // Ensure that if the map is zoomed out such that multiple
-        // copies of the feature are visible, the popup appears
-        // over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                // Populate the popup and set its coordinates
+                // based on the feature found.
+                popuphtml = e.features[0].properties.name + "<br> Rating:  " + e.features[0].properties.rating + "<br> Safety:  " + e.features[0].properties.safety + "<br> Experience:  " + e.features[0].properties.experience;
+                popup.setLngLat(coordinates)
+                    .setHTML(popuphtml)
+                    .addTo(map);
+            });
+
+
+            map.on('mouseleave', layerID, function() {
+                map.getCanvas().style.cursor = '';
+                popup.remove();
+            });
         }
-
-        // Populate the popup and set its coordinates
-        // based on the feature found.
-        popuphtml = e.features[0].properties.name + "<br> Rating:  " + e.features[0].properties.rating + "<br> Safety:  " + e.features[0].properties.safety + "<br> Experience:  " + e.features[0].properties.experience;
-        popup.setLngLat(coordinates)
-            .setHTML(popuphtml)
-            .addTo(map);
     });
 
+    var stateLegendEl = document.getElementById('state-legend');
+    var avgLegendEl = document.getElementById('avg-legend');
+    var ratingLegendEl = document.getElementById('rating-legend');
+    var featureLegendEl = document.getElementById('feature-legend');
 
-    map.on('mouseleave', layerID, function() {
-        map.getCanvas().style.cursor = '';
-        popup.remove();
+    Object.keys(sort).forEach(function(g) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute("class", "btn-space btn-outline-primary");
+        b.textContent = sort[g];
+        b.addEventListener('click', function() {
+            surgeries.forEach(function(name) {
+                if (g == "avg_covered" || g == "avg_tot_pay" || g == "avg_med_pay") {
+                    map.setPaintProperty(name, 'circle-color', {
+                        property: g,
+                        stops: [
+                            [600, '#ffffd9'],
+                            [1200, '#edf8b1'],
+                            [2400, '#c7e9b4'],
+                            [4800, '#7fcdbb'],
+                            [9600, '#41b6c4'],
+                            [19200, '#1d91c0'],
+                            [38400, '#225ea8'],
+                            [76800, '#253494'],
+                            [200600, '#081d58']
+                        ]
+                    });
+                    stateLegendEl.style.display = 'none';
+                    avgLegendEl.style.display = 'block';
+                    ratingLegendEl.style.display = 'none';
+                    featureLegendEl.style.display = 'none';
+                } else if (g == "rating") {
+                    map.setPaintProperty(name, 'circle-color', [
+                        'match', ['get', 'rating'],
+                        '5', '#2c7bb6',
+                        '4', '#abd9e9',
+                        '3', '#ffffbf',
+                        '2', '#fdae61',
+                        /* other */
+                        '#d7191c'
+
+                    ]);
+                    stateLegendEl.style.display = 'none';
+                    avgLegendEl.style.display = 'none';
+                    ratingLegendEl.style.display = 'block';
+                    featureLegendEl.style.display = 'none';
+
+                } else {
+                    map.setPaintProperty(name, 'circle-color', [
+                        'match', ['get', g],
+                        'Below the national average', '#fc8d59',
+                        'Same as the national average', '#ffffbf',
+                        'Above the national average', '#91bfdb',
+                        /* other */
+                        '#ccc'
+
+                    ]);
+                    stateLegendEl.style.display = 'none';
+                    avgLegendEl.style.display = 'none';
+                    ratingLegendEl.style.display = 'none';
+                    featureLegendEl.style.display = 'block';
+                }
+
+            });
+
+        });
+        buttons.appendChild(b);
     });
-		}
-	});
 
-	var stateLegendEl = document.getElementById('state-legend');
-	var avgLegendEl = document.getElementById('avg-legend');
-	var ratingLegendEl = document.getElementById('rating-legend');
-	var featureLegendEl = document.getElementById('feature-legend');
-
-	  Object.keys(sort).forEach(function(g) {
-	      var b = document.createElement('button');
-	      b.type = 'button';
-	      b.setAttribute("class", "btn-space btn-outline-primary");
-	      b.textContent = sort[g];
-	      b.addEventListener('click', function() {
-	      	surgeries.forEach(function(name){
-	      		if (g=="avg_covered" || g=="avg_tot_pay" || g=="avg_med_pay") {
-	      			map.setPaintProperty(name, 'circle-color', {
-		      			property: g,
-		      			stops: [
-			                    [600, '#ffffd9'],
-			                    [1200, '#edf8b1'],
-			                    [2400, '#c7e9b4'],
-			                    [4800, '#7fcdbb'],
-			                    [9600, '#41b6c4'],
-			                    [19200, '#1d91c0'],
-			                    [38400, '#225ea8'],
-			                    [76800, '#253494'],
-			                    [200600, '#081d58']
-			                ]
-	      		});
-	      			stateLegendEl.style.display = 'none';
-	      			avgLegendEl.style.display = 'block';
-	      			ratingLegendEl.style.display = 'none';
-        			featureLegendEl.style.display = 'none';
-	      		} else if (g == "rating") {
-	      			map.setPaintProperty(name, 'circle-color', [
-			                'match',
-			                ['get', 'rating'],
-			                '5', '#2c7bb6',
-			                '4', '#abd9e9',
-			                '3', '#ffffbf',
-			                '2', '#fdae61',
-			                /* other */ '#d7191c'
-
-				      		]);
-	      			stateLegendEl.style.display = 'none';
-	      			avgLegendEl.style.display = 'none';
-	      			ratingLegendEl.style.display = 'block';
-        			featureLegendEl.style.display = 'none';
-
-	      		} else {
-	      			map.setPaintProperty(name, 'circle-color', [
-			                'match',
-			                ['get', g],
-			                'Below the national average', '#fc8d59',
-			                'Same as the national average', '#ffffbf',
-			                'Above the national average', '#91bfdb',
-			                /* other */ '#ccc'
-
-				      		]);
-	      			stateLegendEl.style.display = 'none';
-	      			avgLegendEl.style.display = 'none';
-	      			ratingLegendEl.style.display = 'none';
-        			featureLegendEl.style.display = 'block';
-	      		}
-
-	      	});
-	          
-	      });
-	      buttons.appendChild(b);
-	  });
-
-	  map.on('zoom', function() {
-	    if (map.getZoom() > zoomThreshold) {
+    map.on('zoom', function() {
+        if (map.getZoom() > zoomThreshold) {
             stateLegendEl.style.display = 'none';
-	    } else {
+        } else {
             stateLegendEl.style.display = 'block';
             avgLegendEl.style.display = 'none';
             ratingLegendEl.style.display = 'none';
             featureLegendEl.style.display = 'none';
-	    }
-	});
+        }
+    });
 
 });
 
 map.on('load', function() {
-	map.addSource('stateData', {
-	type: 'geojson',
-	data: './stateData.geojson'
-});
+    map.addSource('stateData', {
+        type: 'geojson',
+        data: './stateData.geojson'
+    });
 
     map.addLayer({
         'id': 'state-cov',
@@ -372,16 +391,16 @@ map.on('load', function() {
                 property: 'avg_covered',
                 // change colors
                 stops: [
-			                    [8510, '#ffffd9'],
-			                    [18410, '#edf8b1'],
-			                    [28310, '#c7e9b4'],
-			                    [38210, '#7fcdbb'],
-			                    [48110, '#41b6c4'],
-			                    [58010, '#1d91c0'],
-			                    [67910, '#225ea8'],
-			                    [77810, '#253494'],
-			                    [97700, '#081d58']
-                ] 
+                    [8510, '#ffffd9'],
+                    [18410, '#edf8b1'],
+                    [28310, '#c7e9b4'],
+                    [38210, '#7fcdbb'],
+                    [48110, '#41b6c4'],
+                    [58010, '#1d91c0'],
+                    [67910, '#225ea8'],
+                    [77810, '#253494'],
+                    [97700, '#081d58']
+                ]
             },
             'fill-opacity': 0.75
         }
@@ -389,39 +408,44 @@ map.on('load', function() {
 });
 
 
-    function dropfunc(obj) {
-        surgeries.forEach(function(d){
-            map.setLayoutProperty(d, 'visibility',
-      d==obj.value ? 'visible' : 'none');
-        });
-    }
+function dropfunc(obj) {
+    surgeries.forEach(function(d) {
+        map.setLayoutProperty(d, 'visibility',
+            d == obj.value ? 'visible' : 'none');
+    });
+}
 
 
-	// 1. listen for change in radio buttons 
-	// document.getElementById("radio button").on("change")
-	// var surgerytype
+// 1. listen for change in radio buttons 
+// document.getElementById("radio button").on("change")
+// var surgerytype
 
-	// State, Cost, Surgery
+// State, Cost, Surgery
 
 
 
 d3.csv("surgery_state_averages.csv", function(err, data) {
 
-	// 2. Look for surgerytype match in data , save in arr surgeries
+    // 2. Look for surgerytype match in data , save in arr surgeries
 
-	// set the dimensions and margins of the graph
-	var margin = {top: 20, right: 20, bottom: 30, left: 40},
-	    width = 400 - margin.left - margin.right,
-	    height = 500 - margin.top - margin.bottom;
+    // set the dimensions and margins of the graph
+    var margin = {
+            top: 20,
+            right: 20,
+            bottom: 30,
+            left: 40
+        },
+        width = 400 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
 
-	// set the ranges
-	var y = d3.scaleBand()
-	          .range([height, 0])
-	          .padding(0.1);
+    // set the ranges
+    var y = d3.scaleBand()
+        .range([height, 0])
+        .padding(0.1);
 
-	var x = d3.scaleLinear()
-	          .range([0, width]);
-	          
+    var x = d3.scaleLinear()
+        .range([0, width]);
+
 
 
     var surgerytype = surgeries[0];
@@ -435,60 +459,61 @@ d3.csv("surgery_state_averages.csv", function(err, data) {
 
 
     function update(s) {
-        var filteredData = data.filter(function(item){
-            return item.Surgery==s;         
-        });
+        var filteredData = data.filter(key => key.Surgery == s);
 
         // Object.keys(data).forEach(function(key) {
         //     console.log(key, data[key]);
         // });
 
-            // append the svg object to the body of the page
-    // append a 'group' element to 'svg'
-    // moves the 'group' element to the top left margin
-    var svg = d3.select("#bar").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform", 
-              "translate(" + margin.left + "," + margin.top + ")");
+        // append the svg object to the body of the page
+        // append a 'group' element to 'svg'
+        // moves the 'group' element to the top left margin
+        var svg = d3.select("#bar").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
 
-                  // Scale the range of the data in the domains
-          xRange = filteredData.map(function(d){ return parseInt(d.Cost)});
-          x.domain([0, d3.max(xRange)]);
-          y.domain(filteredData.map(function(d) { return d.State; }));
-          //y.domain([0, d3.max(data, function(d) { return d.sales; })]);
+        // Scale the range of the data in the domains
+        xRange = filteredData.map(function(d) {
+            return parseInt(d.Cost)
+        });
+        x.domain([0, d3.max(xRange)]);
+        y.domain(filteredData.map(function(d) {
+            return d.State;
+        }));
+        //y.domain([0, d3.max(data, function(d) { return d.sales; })]);
 
-          // append the rectangles for the bar chart
-          svg.selectAll(".bar")
-              .data(filteredData)
+        // append the rectangles for the bar chart
+        svg.selectAll(".bar")
+            .data(filteredData)
             .enter().append("rect")
-              .attr("class", "bar")
-              // .attr("x", function(d) { return x(d.sales); })
-              .attr("width", function(d) { return x(d.Cost); } )
-              .attr("y", function(d) { return y(d.State); })
-              .attr("height", y.bandwidth());
+            .attr("class", "bar")
+            // .attr("x", function(d) { return x(d.sales); })
+            .attr("width", function(d) {
+                return x(d.Cost);
+            })
+            .attr("y", function(d) {
+                return y(d.State);
+            })
+            .attr("height", y.bandwidth());
 
-          // add the x Axis
-          svg.append("g")
-              .attr("transform", "translate(0," + height + ")")
-              .call(d3.axisBottom(x));
+        // add the x Axis
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
 
-          // add the y Axis
-          svg.append("g")
-              .call(d3.axisLeft(y));
+        // add the y Axis
+        svg.append("g")
+            .call(d3.axisLeft(y));
     }
 
 
 });
 
 
-
-
 </script>
-
-
-
 
 
 </body>
