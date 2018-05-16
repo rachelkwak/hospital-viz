@@ -176,30 +176,30 @@ with open('hospital.csv', 'r') as csv_file:
 # medicare csv edit
 ###############
 
-medicare_processed = open('medicare_processed.csv', 'w')
+# medicare_processed = open('medicare_processed.csv', 'w')
 
-with open('medicare.csv', 'r') as csvfile:
+# with open('medicare.csv', 'r') as csvfile:
 
-	dataRows = csv.reader(csvfile, delimiter=',')
-	for idx, line in enumerate(dataRows):
-		outString = ""
-		if idx == 0:
-			for col in line:
-				outString += col + ","
-			outString += "latitude,longitude,rating,mortality,safety,experience"
-			outString += "\n"
-			medicare_processed.write(outString)
-		else:
-			if int(line[1]) in hospitals:
-				d = hospitals[int(line[1])]
+# 	dataRows = csv.reader(csvfile, delimiter=',')
+# 	for idx, line in enumerate(dataRows):
+# 		outString = ""
+# 		if idx == 0:
+# 			for col in line:
+# 				outString += col + ","
+# 			outString += "latitude,longitude,rating,mortality,safety,experience"
+# 			outString += "\n"
+# 			medicare_processed.write(outString)
+# 		else:
+# 			if int(line[1]) in hospitals:
+# 				d = hospitals[int(line[1])]
 
-				if d['lat'] and d['long']:
-					for col in line:
-						outString += "\"" + col + "\"" + ","
+# 				if d['lat'] and d['long']:
+# 					for col in line:
+# 						outString += "\"" + col + "\"" + ","
 					
-					outString += str(d['lat']) + ',' + str(d['long']) + ',' + d['rating'] + ',' + d['mortality'] + ',' + d['safety'] + ',' + d['experience']
-					outString += "\n"
-					medicare_processed.write(outString)
+# 					outString += str(d['lat']) + ',' + str(d['long']) + ',' + d['rating'] + ',' + d['mortality'] + ',' + d['safety'] + ',' + d['experience']
+# 					outString += "\n"
+# 					medicare_processed.write(outString)
 
 
 ###############
