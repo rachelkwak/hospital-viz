@@ -683,10 +683,7 @@ function dropfunc(obj) {
 
 d3.csv("surgery_state_averages.csv", function(err, data) {
 
-    // 2. Look for surgerytype match in data , save in arr surgeries
-
-    // set the dimensions and margins of the graph
-    
+    // Bar chart implementation is adapted from: https://bl.ocks.org/caravinden/eb0e5a2b38c8815919290fa838c6b63b
 
     var margin = {
             top: 20,
