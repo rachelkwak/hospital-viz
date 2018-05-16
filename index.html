@@ -13,8 +13,19 @@
 
 <style>
 
+* {
+ font-family: 'Lato', 'Futura', 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+ font-weight: 400;
+ font-color: #333333;
+}
+
+h1 {
+	font: 'Futura';
+	font-size: 200%;
+}
+
 .bar {
-    fill: steelblue;
+    fill: #3FB9F4;
 }
 
 #bar {
@@ -121,14 +132,17 @@ p {
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-10 text-center">
+        	<p><br></p>
             <h1>HEALTHCARE EXPLORER</h1>
+            <p><br></p>
         </div>
         <div class="col-md-10">
-            <p>&emsp;&emsp;&emsp;Healthcare costs in the United States are significantly higher than that of other countries in the industrialized world. A single treatment or surgery bill can cause a huge blow on the finances of most middle class Americans. According to a 2014 Gallup poll, 1 in 3 Americans have put off medical treatment for this reason. </br>
-            &emsp;&emsp;&emsp;The interactive visualization below compares the cost and quality of surgeries across hospitals in the country. To view the average cost of all surgeries for each state, zoom out on the map. <hr> </p>
+            <p>Healthcare costs in the United States are significantly higher than that of other countries in the industrialized world. A single treatment or surgery bill can cause a huge blow on the finances of most middle class Americans. According to a 2014 Gallup poll, 1 in 3 Americans have put off medical treatment for this reason. </br>
+            	<br>
+            The interactive visualization below compares the cost and quality of surgeries across hospitals in the country. All data shown only includes surgeries without complications or comorbidities. To view the average cost of all surgeries for each state, zoom out on the map. <hr> </p>
         </div>
         <div class="col-md-10 text-center">
-            <h6>To begin, pick a surgery or treatment below</h6>
+            <h6>To begin, pick a surgery or treatment below:</h6>
             <select id='dropdown' class='dropdown' onchange="dropfunc(this)"></select>
             <hr>
         </div>
@@ -176,7 +190,7 @@ p {
             </div>
 
             <div id='feature-legend' class='legend' style='display: none;'>
-                <h6>Features</h6>
+                <h6>Rating</h6>
                 <div><span style='background-color: #91bfdb'></span>Above Avg</div>
                 <div><span style='background-color: #ffffbf'></span>Same</div>
                 <div><span style='background-color: #fc8d59'></span>Below Avg</div>
@@ -223,19 +237,8 @@ map.addControl(new mapboxgl.NavigationControl());
 var zoomThreshold = 3;
 
 var surgeries = [
-    // "001 - HEART TRANSPLANT OR IMPLANT OF HEART ASSIST SYSTEM W MCC",
-    // "202 - BRONCHITIS & ASTHMA W CC/MCC",
-    // "293 - HEART FAILURE & SHOCK W/O CC/MCC",
-    // "313 - CHEST PAIN",
-    // "536 - FRACTURES OF HIP & PELVIS W/O MCC",
-    // "552 - MEDICAL BACK PROBLEMS W/O MCC",
-    // "652 - KIDNEY TRANSPLANT",
-    // "765 - CESAREAN SECTION W CC/MCC",
-    // "864 - FEVER",
-    // "917 - POISONING & TOXIC EFFECTS OF DRUGS W MCC"
-
- //    "003 - ECMO OR TRACH W MV >96 HRS OR PDX EXC FACE, MOUTH & NECK W MAJ O.R.",
-	// "004 - TRACH W MV 96+ HRS OR PDX EXC FACE, MOUTH & NECK W/O MAJ O.R.",
+ 	"003 - ECMO OR TRACH W MV >96 HRS OR PDX EXC FACE, MOUTH & NECK W MAJ O.R.",
+	"004 - TRACH W MV 96+ HRS OR PDX EXC FACE, MOUTH & NECK W/O MAJ O.R.",
 	"027 - CRANIOTOMY & ENDOVASCULAR INTRACRANIAL PROCEDURES W/O CC/MCC",
 	"039 - EXTRACRANIAL PROCEDURES W/O CC/MCC",
 	"057 - DEGENERATIVE NERVOUS SYSTEM DISORDERS W/O MCC",
@@ -337,117 +340,107 @@ var surgeries = [
 ];
 
 var pretty_names = [
-    // "Heart Transplant",
-    // "Bronchitis and Asthma",
-    // "Heart Failure and Shock",
-    // "Chest Pain",
-    // "Hip and Pelvis Fractures",
-    // "Medical Back Problems",
-    // "Kidney Transplant",
-    // "Cesarean Section",
-    // "Fever",
-    // "Drug Poisoning"
-
- //    "003 - ECMO OR TRACH W MV >96 HRS OR PDX EXC FACE, MOUTH & NECK W MAJ O.R.",
-	// "004 - TRACH W MV 96+ HRS OR PDX EXC FACE, MOUTH & NECK W/O MAJ O.R.",
-	"027 - CRANIOTOMY & ENDOVASCULAR INTRACRANIAL PROCEDURES W/O CC/MCC",
-	"039 - EXTRACRANIAL PROCEDURES W/O CC/MCC",
-	"057 - DEGENERATIVE NERVOUS SYSTEM DISORDERS W/O MCC",
-	"066 - INTRACRANIAL HEMORRHAGE OR CEREBRAL INFARCTION W/O CC/MCC",
-	"069 - TRANSIENT ISCHEMIA",
-	"074 - CRANIAL & PERIPHERAL NERVE DISORDERS W/O MCC",
-	"087 - TRAUMATIC STUPOR & COMA, COMA <1 HR W/O CC/MCC",
-	"093 - OTHER DISORDERS OF NERVOUS SYSTEM W/O CC/MCC",
-	"101 - SEIZURES W/O MCC",
-	"103 - HEADACHES W/O MCC",
-	"149 - DYSEQUILIBRIUM",
-	"153 - OTITIS MEDIA & URI W/O MCC",
-	"165 - MAJOR CHEST PROCEDURES W/O CC/MCC",
-	"176 - PULMONARY EMBOLISM W/O MCC",
-	"179 - RESPIRATORY INFECTIONS & INFLAMMATIONS W/O CC/MCC",
-	"189 - PULMONARY EDEMA & RESPIRATORY FAILURE",
-	"192 - CHRONIC OBSTRUCTIVE PULMONARY DISEASE W/O CC/MCC",
-	"195 - SIMPLE PNEUMONIA & PLEURISY W/O CC/MCC",
-	"203 - BRONCHITIS & ASTHMA W/O CC/MCC",
-	"204 - RESPIRATORY SIGNS & SYMPTOMS",
-	"206 - OTHER RESPIRATORY SYSTEM DIAGNOSES W/O MCC",
-	"207 - RESPIRATORY SYSTEM DIAGNOSIS W VENTILATOR SUPPORT 96+ HOURS",
-	"208 - RESPIRATORY SYSTEM DIAGNOSIS W VENTILATOR SUPPORT <96 HOURS",
-	"221 - CARDIAC VALVE & OTH MAJ CARDIOTHORACIC PROC W/O CARD CATH W/O CC/MCC",
-	"227 - CARDIAC DEFIBRILLATOR IMPLANT W/O CARDIAC CATH W/O MCC",
-	"234 - CORONARY BYPASS W CARDIAC CATH W/O MCC",
-	"236 - CORONARY BYPASS W/O CARDIAC CATH W/O MCC",
-	"238 - MAJOR CARDIOVASC PROCEDURES W/O MCC",
-	"244 - PERMANENT CARDIAC PACEMAKER IMPLANT W/O CC/MCC",
-	"247 - PERC CARDIOVASC PROC W DRUG-ELUTING STENT W/O MCC",
-	"249 - PERC CARDIOVASC PROC W NON-DRUG-ELUTING STENT W/O MCC",
-	"251 - PERC CARDIOVASC PROC W/O CORONARY ARTERY STENT W/O MCC",
-	"254 - OTHER VASCULAR PROCEDURES W/O CC/MCC",
-	"264 - OTHER CIRCULATORY SYSTEM O.R. PROCEDURES",
-	"267 - ENDOVASCULAR CARDIAC VALVE REPLACEMENT W/O MCC",
-	"282 - ACUTE MYOCARDIAL INFARCTION, DISCHARGED ALIVE W/O CC/MCC",
-	"287 - CIRCULATORY DISORDERS EXCEPT AMI, W CARD CATH W/O MCC",
-	"293 - HEART FAILURE & SHOCK W/O CC/MCC",
-	"301 - PERIPHERAL VASCULAR DISORDERS W/O CC/MCC",
-	"303 - ATHEROSCLEROSIS W/O MCC",
-	"305 - HYPERTENSION W/O MCC",
-	"310 - CARDIAC ARRHYTHMIA & CONDUCTION DISORDERS W/O CC/MCC",
-	"312 - SYNCOPE & COLLAPSE",
-	"313 - CHEST PAIN",
-	"328 - STOMACH, ESOPHAGEAL & DUODENAL PROC W/O CC/MCC",
-	"331 - MAJOR SMALL & LARGE BOWEL PROCEDURES W/O CC/MCC",
-	"355 - HERNIA PROCEDURES EXCEPT INGUINAL & FEMORAL W/O CC/MCC",
-	"373 - MAJOR GASTROINTESTINAL DISORDERS & PERITONEAL INFECTIONS W/O CC/MCC",
-	"379 - G.I. HEMORRHAGE W/O CC/MCC",
-	"390 - G.I. OBSTRUCTION W/O CC/MCC",
-	"392 - ESOPHAGITIS, GASTROENT & MISC DIGEST DISORDERS W/O MCC",
-	"395 - OTHER DIGESTIVE SYSTEM DIAGNOSES W/O CC/MCC",
-	"419 - LAPAROSCOPIC CHOLECYSTECTOMY W/O C.D.E. W/O CC/MCC",
-	"440 - DISORDERS OF PANCREAS EXCEPT MALIGNANCY W/O CC/MCC",
-	"446 - DISORDERS OF THE BILIARY TRACT W/O CC/MCC",
-	"455 - COMBINED ANTERIOR/POSTERIOR SPINAL FUSION W/O CC/MCC",
-	"460 - SPINAL FUSION EXCEPT CERVICAL W/O MCC",
-	"462 - BILATERAL OR MULTIPLE MAJOR JOINT PROCS OF LOWER EXTREMITY W/O MCC",
-	"468 - REVISION OF HIP OR KNEE REPLACEMENT W/O CC/MCC",
-	"470 - MAJOR JOINT REPLACEMENT OR REATTACHMENT OF LOWER EXTREMITY W/O MCC",
-	"473 - CERVICAL SPINAL FUSION W/O CC/MCC",
-	"482 - HIP & FEMUR PROCEDURES EXCEPT MAJOR JOINT W/O CC/MCC",
-	"483 - MAJOR JOINT/LIMB REATTACHMENT PROCEDURE OF UPPER EXTREMITIES",
-	"494 - LOWER EXTREM & HUMER PROC EXCEPT HIP,FOOT,FEMUR W/O CC/MCC",
-	"517 - OTHER MUSCULOSKELET SYS & CONN TISS O.R. PROC W/O CC/MCC",
-	"520 - BACK & NECK PROC EXC SPINAL FUSION W/O CC/MCC",
-	"536 - FRACTURES OF HIP & PELVIS W/O MCC",
-	"552 - MEDICAL BACK PROBLEMS W/O MCC",
-	"554 - BONE DISEASES & ARTHROPATHIES W/O MCC",
-	"556 - SIGNS & SYMPTOMS OF MUSCULOSKELETAL SYSTEM & CONN TISSUE W/O MCC",
-	"558 - TENDONITIS, MYOSITIS & BURSITIS W/O MCC",
-	"563 - FX, SPRN, STRN & DISL EXCEPT FEMUR, HIP, PELVIS & THIGH W/O MCC",
-	"603 - CELLULITIS W/O MCC",
-	"605 - TRAUMA TO THE SKIN, SUBCUT TISS & BREAST W/O MCC",
-	"621 - O.R. PROCEDURES FOR OBESITY W/O CC/MCC",
-	"639 - DIABETES W/O CC/MCC",
-	"641 - MISC DISORDERS OF NUTRITION,METABOLISM,FLUIDS/ELECTROLYTES W/O MCC",
-	"652 - KIDNEY TRANSPLANT",
-	"658 - KIDNEY & URETER PROCEDURES FOR NEOPLASM W/O CC/MCC",
-	"684 - RENAL FAILURE W/O CC/MCC",
-	"690 - KIDNEY & URINARY TRACT INFECTIONS W/O MCC",
-	"694 - URINARY STONES W/O ESW LITHOTRIPSY W/O MCC",
-	"696 - KIDNEY & URINARY TRACT SIGNS & SYMPTOMS W/O MCC",
-	"708 - MAJOR MALE PELVIC PROCEDURES W/O CC/MCC",
-	"743 - UTERINE & ADNEXA PROC FOR NON-MALIGNANCY W/O CC/MCC",
-	"812 - RED BLOOD CELL DISORDERS W/O MCC",
-	"813 - COAGULATION DISORDERS",
-	"863 - POSTOPERATIVE & POST-TRAUMATIC INFECTIONS W/O MCC",
-	"864 - FEVER",
-	"870 - SEPTICEMIA OR SEVERE SEPSIS W MV >96 HOURS",
-	"872 - SEPTICEMIA OR SEVERE SEPSIS W/O MV >96 HOURS W/O MCC",
-	"881 - DEPRESSIVE NEUROSES",
-	"884 - ORGANIC DISTURBANCES & MENTAL RETARDATION",
-	"885 - PSYCHOSES",
-	"894 - ALCOHOL/DRUG ABUSE OR DEPENDENCE, LEFT AMA",
-	"897 - ALCOHOL/DRUG ABUSE OR DEPENDENCE W/O REHABILITATION THERAPY W/O MCC",
-	"918 - POISONING & TOXIC EFFECTS OF DRUGS W/O MCC",
-	"948 - SIGNS & SYMPTOMS W/O MCC"
+	"--",
+	"Ecmo or trach with mv >96 hrs or pdx exc face, mouth & neck with maj O.R. (003)",
+	"Trach with mv 96+ hrs or pdx exc face, mouth & neck without maj O.R. (004)",
+	"Craniotomy & endovascular intracranial procedures (027)",
+	"Extracranial procedures (039)",
+	"Degenerative nervous system disorders (057)",
+	"Intracranial hemorrhage or cerebral infarction (066)",
+	"Transient ischemia (069)",
+	"Cranial & peripheral nerve disorders (074)",
+	"Traumatic stupor & coma, coma <1 hr (087)",
+	"Other disorders of nervous system (093)",
+	"Seizures (101)",
+	"Headaches (103)",
+	"Dysequilibrium (149)",
+	"Otitis media & uri (153)",
+	"Major chest procedures (165)",
+	"Pulmonary embolism (176)",
+	"Respiratory infections & inflammations (179)",
+	"Pulmonary edema & respiratory failure (189)",
+	"Chronic obstructive pulmonary disease (192)",
+	"Simple pneumonia & pleurisy (195)",
+	"Bronchitis & asthma (203)",
+	"Respiratory signs & symptoms (204)",
+	"Other respiratory system diagnoses (206)",
+	"Respiratory system diagnosis with ventilator support 96+ hours (207)",
+	"Respiratory system diagnosis with ventilator support <96 hours (208)",
+	"Cardiac valve & oth maj cardiothoracic proc without card cath (221)",
+	"Cardiac defibrillator implant without cardiac cath (227)",
+	"Coronary bypass with cardiac cath (234)",
+	"Coronary bypass without cardiac cath (236)",
+	"Major cardiovasc procedures (238)",
+	"Permanent cardiac pacemaker implant (244)",
+	"Perc cardiovasc proc with drug-eluting stent (247)",
+	"Perc cardiovasc proc with non-drug-eluting stent (249)",
+	"Perc cardiovasc proc without coronary artery stent (251)",
+	"Other vascular procedures (254)",
+	"Other circulatory system O.R. procedures (264)",
+	"Endovascular cardiac valve replacement (267)",
+	"Acute myocardial infarction, discharged alive (282)",
+	"Circulatory disorders except ami, with card cath (287)",
+	"Heart failure & shock (293)",
+	"Peripheral vascular disorders (301)",
+	"Atherosclerosis (303)",
+	"Hypertension (305)",
+	"Cardiac arrhythmia & conduction disorders (310)",
+	"Syncope & collapse (312)",
+	"Chest pain (313)",
+	"Stomach, esophageal & duodenal proc (328)",
+	"Major small & large bowel procedures (331)",
+	"Hernia procedures except inguinal & femoral (355)",
+	"Major gastrointestinal disorders & peritoneal infections (373)",
+	"G.i. hemorrhage (379)",
+	"G.i. obstruction (390)",
+	"Esophagitis, gastroent & misc digest disorders (392)",
+	"Other digestive system diagnoses (395)",
+	"Laparoscopic cholecystectomy without c.d.e. (419)",
+	"Disorders of pancreas except malignancy (440)",
+	"Disorders of the biliary tract (446)",
+	"Combined anterior/posterior spinal fusion (455)",
+	"Spinal fusion except cervical (460)",
+	"Bilateral or multiple major joint procs of lower extremity (462)",
+	"Revision of hip or knee replacement (468)",
+	"Major joint replacement or reattachment of lower extremity (470)",
+	"Cervical spinal fusion (473)",
+	"Hip & femur procedures except major joint (482)",
+	"Major joint/limb reattachment procedure of upper extremities (483)",
+	"Lower extrem & humer proc except hip,foot,femur (494)",
+	"Other musculoskelet sys & conn tiss O.R. proc (517)",
+	"Back & neck proc exc spinal fusion (520)",
+	"Fractures of hip & pelvis (536)",
+	"Medical back problems (552)",
+	"Bone diseases & arthropathies (554)",
+	"Signs & symptoms of musculoskeletal system & conn tissue (556)",
+	"Tendonitis, myositis & bursitis (558)",
+	"Fx, sprn, strn & disl except femur, hip, pelvis & thigh (563)",
+	"Cellulitis (603)",
+	"Trauma to the skin, subcut tiss & breast (605)",
+	"O.r. procedures for obesity (621)",
+	"Diabetes (639)",
+	"Misc disorders of nutrition,metabolism,fluids/electrolytes (641)",
+	"Kidney transplant (652)",
+	"Kidney & ureter procedures for neoplasm (658)",
+	"Renal failure (684)",
+	"Kidney & urinary tract infections (690)",
+	"Urinary stones without esw lithotripsy (694)",
+	"Kidney & urinary tract signs & symptoms (696)",
+	"Major male pelvic procedures (708)",
+	"Uterine & adnexa proc for non-malignancy (743)",
+	"Red blood cell disorders (812)",
+	"Coagulation disorders (813)",
+	"Postoperative & post-traumatic infections (863)",
+	"Fever (864)",
+	"Septicemia or severe sepsis with mv >96 hours (870)",
+	"Septicemia or severe sepsis without mv >96 hours (872)",
+	"Depressive neuroses (881)",
+	"Organic disturbances & mental retardation (884)",
+	"Psychoses (885)",
+	"Alcohol/drug abuse or dependence, left ama (894)",
+	"Alcohol/drug abuse or dependence without rehabilitation therapy (897)",
+	"Poisoning & toxic effects of drugs (918)",
+	"Signs & symptoms (948)"
 ];
 
 var sort = {
